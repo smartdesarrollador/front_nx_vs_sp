@@ -2,6 +2,7 @@ import { notFound } from 'next/navigation';
 import { getTranslations } from 'next-intl/server';
 import type { Metadata } from 'next';
 import { getPublicPortfolio } from '@/lib/publicApi';
+import { buildCreativeWorkJsonLd } from '@/lib/seo';
 import { PortfolioNav } from '@/components/portfolio/PortfolioNav';
 import { PortfolioDetail } from '@/components/portfolio/PortfolioDetail';
 
@@ -35,8 +36,14 @@ export default async function PortfolioItemPage({ params }: Props) {
   const item = data.items.find((i) => i.slug === slug);
   if (!item) notFound();
 
+  const jsonLd = buildCreativeWorkJsonLd(item, data.profile, locale);
+
   return (
     <div className="min-h-screen flex flex-col bg-white dark:bg-gray-900">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
       <PortfolioNav
         profileName={data.profile.display_name}
         locale={locale}

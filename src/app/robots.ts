@@ -1,0 +1,21 @@
+import type { MetadataRoute } from 'next';
+
+const APP_URL = process.env.NEXT_PUBLIC_APP_URL ?? 'http://localhost:3004';
+
+export default function robots(): MetadataRoute.Robots {
+  return {
+    rules: [
+      {
+        userAgent: '*',
+        allow: ['/es/', '/en/'],
+        disallow: [
+          '/es/dashboard/',
+          '/en/dashboard/',
+          '/es/sso',
+          '/en/sso',
+        ],
+      },
+    ],
+    sitemap: `${APP_URL}/sitemap.xml`,
+  };
+}

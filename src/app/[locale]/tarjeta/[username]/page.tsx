@@ -2,6 +2,7 @@ import { notFound } from 'next/navigation';
 import { getTranslations } from 'next-intl/server';
 import type { Metadata } from 'next';
 import { getPublicProfile } from '@/lib/publicApi';
+import { buildPersonJsonLd } from '@/lib/seo';
 import { PublicCardView } from '@/components/tarjeta/PublicCardView';
 import { ThemeToggle } from '@/components/shared/ThemeToggle';
 import Link from 'next/link';
@@ -44,8 +45,14 @@ export default async function TarjetaPage({ params }: Props) {
 
   const { profile, digital_card } = data;
   const bgColor = digital_card?.background_color ?? '#ffffff';
+  const jsonLd = buildPersonJsonLd(profile, digital_card);
 
   return (
+    <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
     <div
       className="min-h-screen flex flex-col"
       style={{ backgroundColor: bgColor }}
@@ -68,5 +75,6 @@ export default async function TarjetaPage({ params }: Props) {
         {t('poweredBy')}
       </footer>
     </div>
+    </>
   );
 }

@@ -2,6 +2,7 @@ import { notFound } from 'next/navigation';
 import { getTranslations } from 'next-intl/server';
 import type { Metadata } from 'next';
 import { getPublicCV } from '@/lib/publicApi';
+import { buildCVPersonJsonLd } from '@/lib/seo';
 import { CVNav } from '@/components/cv/CVNav';
 import { PrintButton } from '@/components/cv/PrintButton';
 import { ClassicTemplate } from '@/components/cv/templates/ClassicTemplate';
@@ -45,6 +46,7 @@ export default async function CVPage({ params }: Props) {
 
   const { profile, cv } = data;
   const Template = TEMPLATE_MAP[cv.template_type] ?? ClassicTemplate;
+  const jsonLd = buildCVPersonJsonLd(profile, cv);
 
   const labels = {
     summary: t('summary'),
@@ -59,6 +61,10 @@ export default async function CVPage({ params }: Props) {
 
   return (
     <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
       <style>{`
         @media print {
           nav, footer, button { display: none !important; }

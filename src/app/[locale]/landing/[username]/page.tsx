@@ -3,6 +3,7 @@ import { getTranslations } from 'next-intl/server';
 import type { Metadata } from 'next';
 import Script from 'next/script';
 import { getPublicLanding } from '@/lib/publicApi';
+import { buildWebPageJsonLd } from '@/lib/seo';
 import { PublicLandingNav } from '@/components/landing/PublicLandingNav';
 import { PublicLandingView } from '@/components/landing/PublicLandingView';
 
@@ -34,9 +35,14 @@ export default async function LandingPage({ params }: Props) {
   if (!data || !data.landing) notFound();
 
   const { profile, landing } = data;
+  const jsonLd = buildWebPageJsonLd(profile, landing);
 
   return (
     <div className="min-h-screen flex flex-col bg-white dark:bg-gray-900">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
       {landing.ga_tracking_id && (
         <Script
           src={`https://www.googletagmanager.com/gtag/js?id=${landing.ga_tracking_id}`}
