@@ -1,0 +1,46 @@
+{
+  "home": {
+    "title": "Servicios Digitales Profesionales",
+    "subtitle": "Soluciones digitales a medida para impulsar tu negocio",
+    "cta": "Ver servicios"
+  },
+  "nav": {
+    "home": "Vista Digital",
+    "dashboard": "Inicio",
+    "tarjeta": "Tarjeta Digital",
+    "landing": "Landing Page",
+    "portfolio": "Portfolio",
+    "cv": "CV Digital",
+    "analytics": "Analytics",
+    "dominio": "Dominio Custom",
+    "upgrade": "Actualizar Plan",
+    "logout": "Cerrar Sesión",
+    "services": "Servicios",
+    "contact": "Contacto"
+  },
+  "plan": {
+    "free": "Free",
+    "starter": "Starter",
+    "professional": "Professional",
+    "enterprise": "Enterprise"
+  },
+  "upgrade": {
+    "title": "Función Premium",
+    "cta": "Actualizar Plan",
+    "lockedSuffix": "(requiere {plan})"
+  },
+  "dashboard": {
+    "title": "Tu Panel Digital",
+    "subtitle": "Gestiona tus servicios digitales",
+    "tarjetaDesc": "Crea y comparte tu tarjeta de presentación digital",
+    "landingDesc": "Diseña una landing page profesional para tu negocio",
+    "portfolioDesc": "Muestra tus proyectos con galerías y categorías",
+    "cvDesc": "Crea y exporta tu currículum vitae digital"
+  },
+  "common": {
+    "loading": "Cargando...",
+    "error": "Ha ocurrido un error",
+    "retry": "Intentar de nuevo",
+    "backHome": "Volver al inicio"
+  }
+}

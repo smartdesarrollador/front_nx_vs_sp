@@ -1,0 +1,46 @@
+{
+  "home": {
+    "title": "Professional Digital Services",
+    "subtitle": "Custom digital solutions to boost your business",
+    "cta": "View services"
+  },
+  "nav": {
+    "home": "Vista Digital",
+    "dashboard": "Home",
+    "tarjeta": "Digital Card",
+    "landing": "Landing Page",
+    "portfolio": "Portfolio",
+    "cv": "Digital CV",
+    "analytics": "Analytics",
+    "dominio": "Custom Domain",
+    "upgrade": "Upgrade Plan",
+    "logout": "Sign Out",
+    "services": "Services",
+    "contact": "Contact"
+  },
+  "plan": {
+    "free": "Free",
+    "starter": "Starter",
+    "professional": "Professional",
+    "enterprise": "Enterprise"
+  },
+  "upgrade": {
+    "title": "Premium Feature",
+    "cta": "Upgrade Plan",
+    "lockedSuffix": "(requires {plan})"
+  },
+  "dashboard": {
+    "title": "Your Digital Dashboard",
+    "subtitle": "Manage your digital services",
+    "tarjetaDesc": "Create and share your digital business card",
+    "landingDesc": "Design a professional landing page for your business",
+    "portfolioDesc": "Showcase your projects with galleries and categories",
+    "cvDesc": "Create and export your digital resume"
+  },
+  "common": {
+    "loading": "Loading...",
+    "error": "An error occurred",
+    "retry": "Try again",
+    "backHome": "Back to home"
+  }
+}
