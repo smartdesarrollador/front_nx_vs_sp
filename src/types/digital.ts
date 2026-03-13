@@ -30,16 +30,24 @@ export interface PublicCardResponse {
   digital_card: DigitalCard | null;
 }
 
-// Types for future PASOSs (5–7)
+// Landing types (PASO 5)
+export type LandingSectionType =
+  | 'hero'
+  | 'about'
+  | 'services'
+  | 'testimonials'
+  | 'stats'
+  | 'contact';
+
+export type LandingTemplateType = 'basic' | 'minimal' | 'corporate' | 'creative';
+
 export interface LandingSection {
-  id: string;
-  type: 'hero' | 'features' | 'testimonials' | 'contact' | 'cta';
+  type: LandingSectionType;
   content: Record<string, unknown>;
-  order: number;
 }
 
 export interface LandingTemplate {
-  template_type: 'basic' | 'minimal' | 'corporate' | 'creative';
+  template_type: LandingTemplateType;
   sections: LandingSection[];
   contact_email: string;
   enable_contact_form: boolean;

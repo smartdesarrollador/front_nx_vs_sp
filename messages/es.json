@@ -52,5 +52,15 @@
     "poweredBy": "Creado con Vista Digital",
     "shareCard": "Compartir tarjeta",
     "scanQR": "Escanea el QR"
+  },
+  "landing": {
+    "notFound": "Landing page no encontrada",
+    "notFoundDesc": "Esta landing page no existe o no está publicada",
+    "poweredBy": "Creado con Vista Digital",
+    "contactSent": "¡Mensaje enviado! Te responderemos pronto.",
+    "sendMessage": "Enviar mensaje",
+    "namePlaceholder": "Tu nombre",
+    "emailPlaceholder": "Tu correo electrónico",
+    "messagePlaceholder": "Tu mensaje..."
   }
 }
