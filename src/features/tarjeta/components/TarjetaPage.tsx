@@ -6,6 +6,7 @@ import { useFeatureGate } from '@/hooks/useFeatureGate';
 import { UpgradePrompt } from '@/components/shared/UpgradePrompt';
 import { CardPreview } from './CardPreview';
 import { CardEditor } from './CardEditor';
+import { ServiceAnalyticsView } from '@/features/analytics/components/ServiceAnalyticsView';
 
 type Tab = 'preview' | 'editor' | 'analytics';
 
@@ -75,12 +76,7 @@ export function TarjetaPage({ locale }: TarjetaPageProps) {
       )}
       {activeTab === 'analytics' &&
         (canAccessAnalytics ? (
-          <div className="text-center py-16 text-gray-500 dark:text-gray-400">
-            <p className="text-lg font-medium">Proximamente</p>
-            <p className="text-sm mt-1">
-              Las estadisticas de tu tarjeta estaran disponibles pronto.
-            </p>
-          </div>
+          <ServiceAnalyticsView service="tarjeta" days={7} />
         ) : (
           <div className="py-4">
             <UpgradePrompt
