@@ -81,5 +81,20 @@
     "closeGallery": "Close gallery",
     "previousImage": "Previous image",
     "nextImage": "Next image"
+  },
+  "cv": {
+    "notFound": "CV not found",
+    "notFoundDesc": "This CV does not exist or is not published",
+    "poweredBy": "Created with Vista Digital",
+    "print": "Download PDF",
+    "printing": "Preparing...",
+    "summary": "Professional Profile",
+    "experience": "Experience",
+    "education": "Education",
+    "skills": "Skills",
+    "languages": "Languages",
+    "certifications": "Certifications",
+    "present": "Present",
+    "contact": "Contact"
   }
 }
