@@ -114,3 +114,17 @@ export interface PublicCVResponse {
   profile: PublicProfile;
   cv: CVDocument | null;
 }
+
+export interface DigitalProfile {
+  username: string;
+  display_name: string;
+  is_public: boolean;
+  has_digital_card: boolean;
+  has_landing: boolean;
+  has_portfolio: boolean;
+  has_cv: boolean;
+  digital_card_published: boolean;
+  landing_published: boolean;
+  portfolio_published: boolean;
+  cv_published: boolean;
+}
