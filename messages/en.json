@@ -42,5 +42,15 @@
     "error": "An error occurred",
     "retry": "Try again",
     "backHome": "Back to home"
+  },
+  "tarjeta": {
+    "notFound": "Digital card not found",
+    "notFoundDesc": "This card does not exist or is not published",
+    "backHome": "Back to home",
+    "loading": "Loading card...",
+    "saveContact": "Save contact",
+    "poweredBy": "Created with Vista Digital",
+    "shareCard": "Share card",
+    "scanQR": "Scan the QR"
   }
 }

@@ -42,5 +42,15 @@
     "error": "Ha ocurrido un error",
     "retry": "Intentar de nuevo",
     "backHome": "Volver al inicio"
+  },
+  "tarjeta": {
+    "notFound": "Tarjeta digital no encontrada",
+    "notFoundDesc": "Esta tarjeta no existe o no está publicada",
+    "backHome": "Volver al inicio",
+    "loading": "Cargando tarjeta...",
+    "saveContact": "Guardar contacto",
+    "poweredBy": "Creado con Vista Digital",
+    "shareCard": "Compartir tarjeta",
+    "scanQR": "Escanea el QR"
   }
 }
