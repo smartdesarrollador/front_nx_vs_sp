@@ -62,5 +62,24 @@
     "namePlaceholder": "Your name",
     "emailPlaceholder": "Your email address",
     "messagePlaceholder": "Your message..."
+  },
+  "portfolio": {
+    "notFound": "Portfolio not found",
+    "notFoundDesc": "This portfolio does not exist or is not published",
+    "projectNotFound": "Project not found",
+    "projectNotFoundDesc": "This project does not exist or was removed",
+    "poweredBy": "Created with Vista Digital",
+    "featured": "Featured",
+    "filterAll": "All",
+    "viewProject": "View project",
+    "viewGithub": "GitHub",
+    "viewCaseStudy": "View case study",
+    "noProjects": "No published projects yet",
+    "noProjectsFiltered": "No projects with this tag",
+    "backToPortfolio": "Back to portfolio",
+    "gallery": "Project gallery",
+    "closeGallery": "Close gallery",
+    "previousImage": "Previous image",
+    "nextImage": "Next image"
   }
 }
