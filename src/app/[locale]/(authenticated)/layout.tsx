@@ -5,6 +5,7 @@ import { Navbar } from '@/components/layout/Navbar';
 import { Sidebar } from '@/components/layout/Sidebar';
 import { MobileOverlay } from '@/components/layout/MobileOverlay';
 import { cn } from '@/utils/cn';
+import { useSessionRestore } from '@/hooks/useSessionRestore';
 
 interface AuthenticatedLayoutProps {
   children: React.ReactNode;
@@ -13,6 +14,7 @@ interface AuthenticatedLayoutProps {
 
 export default function AuthenticatedLayout({ children, params }: AuthenticatedLayoutProps) {
   const { locale } = use(params);
+  useSessionRestore();
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
 
