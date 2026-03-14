@@ -5,7 +5,7 @@ import { publicClient, apiClient } from '@/lib/api';
 import { useAuthStore } from '@/store/authStore';
 import type { User } from '@/types/auth';
 
-const HUB_URL = process.env.NEXT_PUBLIC_HUB_URL ?? 'http://localhost:3003';
+const HUB_URL = process.env.NEXT_PUBLIC_HUB_URL ?? 'http://localhost:5175';
 
 export function useSessionRestore(): void {
   const isAuthenticated = useAuthStore((s) => s.isAuthenticated);
@@ -17,7 +17,10 @@ export function useSessionRestore(): void {
     if (isAuthenticated) return;
 
     const refresh = localStorage.getItem('refreshToken');
-    if (!refresh) return;
+    if (!refresh) {
+      window.location.href = `${HUB_URL}/login?next=vista`;
+      return;
+    }
 
     publicClient
       .post<{ access_token: string; refresh_token: string }>('/auth/token/refresh/', {
@@ -34,7 +37,7 @@ export function useSessionRestore(): void {
       })
       .catch(() => {
         clearAuth();
-        window.location.href = HUB_URL;
+        window.location.href = `${HUB_URL}/login?next=vista`;
       });
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 }

@@ -1,12 +1,14 @@
 export interface User {
   id: string;
   email: string;
-  first_name: string;
-  last_name: string;
+  name: string;
   avatar?: string;
   roles: string[];
   permissions: string[];
-  tenant_slug: string;
+  tenant_id?: string;
+  email_verified?: boolean;
+  mfa_enabled?: boolean;
+  created_at?: string;
 }
 
 export interface TokenResponse {

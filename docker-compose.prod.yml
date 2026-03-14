@@ -1,0 +1,23 @@
+# ─────────────────────────────────────────────────────────────
+# Production docker-compose override
+# Usage: docker compose -f docker-compose.yml -f docker-compose.prod.yml up -d
+# ─────────────────────────────────────────────────────────────
+
+services:
+  nextjs:
+    build:
+      context: .
+      target: prod
+      args:
+        NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL}
+        NEXT_PUBLIC_APP_URL: ${NEXT_PUBLIC_APP_URL}
+        NEXT_PUBLIC_HUB_URL: ${NEXT_PUBLIC_HUB_URL}
+    container_name: rbac_next_vista
+    # Sin ports — nginx-proxy-manager accede directamente por la red global
+    networks:
+      - default
+      - global
+
+networks:
+  global:
+    external: true

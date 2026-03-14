@@ -25,12 +25,10 @@ function getBreadcrumb(pathname: string): string {
     .replace(/\b\w/g, (c) => c.toUpperCase());
 }
 
-function getInitials(firstName: string, lastName: string): string {
-  return `${firstName[0] ?? ''}${lastName[0] ?? ''}`.toUpperCase();
-}
-
-function getFullName(firstName: string, lastName: string): string {
-  return `${firstName} ${lastName}`.trim();
+function getInitials(name: string): string {
+  const parts = (name ?? '').trim().split(/\s+/);
+  if (parts.length >= 2) return `${parts[0][0]}${parts[1][0]}`.toUpperCase();
+  return (parts[0]?.[0] ?? '').toUpperCase();
 }
 
 const HUB_URL = process.env.NEXT_PUBLIC_HUB_URL ?? '';
@@ -91,7 +89,7 @@ export function Navbar({ onToggleSidebar, locale }: NavbarProps) {
           {user && (
             <div className="hidden flex-col items-end md:flex mr-1">
               <span className="text-sm font-medium text-gray-900 dark:text-white leading-tight">
-                {getFullName(user.first_name, user.last_name)}
+                {user.name}
               </span>
               <span className="text-xs text-gray-500 dark:text-gray-400">{user.email}</span>
             </div>
@@ -100,7 +98,7 @@ export function Navbar({ onToggleSidebar, locale }: NavbarProps) {
           {/* Avatar */}
           {user && (
             <div className="flex h-9 w-9 items-center justify-center rounded-full bg-gradient-to-br from-blue-500 to-purple-600 text-sm font-semibold text-white shrink-0">
-              {getInitials(user.first_name, user.last_name)}
+              {getInitials(user.name)}
             </div>
           )}
 
