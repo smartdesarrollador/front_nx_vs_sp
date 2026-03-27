@@ -25,6 +25,7 @@ export type FeatureKey =
   | 'prioritySupport';
 
 export type UpgradableFeatureKey =
+  | 'digitalCardQR'
   | 'digitalCardVCard'
   | 'digitalCardAnalytics'
   | 'landingPage'
@@ -39,7 +40,7 @@ export type UpgradableFeatureKey =
 export const FEATURES_BY_PLAN: Record<Plan, Record<FeatureKey, boolean | number>> = {
   free: {
     digitalCard: true,
-    digitalCardQR: true,
+    digitalCardQR: false,
     digitalCardCustomColors: true,
     digitalCardVCard: false,
     digitalCardAnalytics: false,
@@ -139,6 +140,11 @@ export const UPGRADE_MESSAGES: Record<
   UpgradableFeatureKey,
   { title: string; message: string; requiredPlan: Plan }
 > = {
+  digitalCardQR: {
+    title: 'Código QR',
+    message: 'Genera un código QR para tu tarjeta digital y permite que cualquiera te escanee.',
+    requiredPlan: 'starter',
+  },
   digitalCardVCard: {
     title: 'Exportar Contacto',
     message:

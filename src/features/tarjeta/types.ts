@@ -3,6 +3,7 @@ import type { PublicCardResponse } from '@/types/digital';
 export type CardData = PublicCardResponse;
 
 export interface CardFormData {
+  username: string;
   display_name: string;
   title: string;
   bio: string;

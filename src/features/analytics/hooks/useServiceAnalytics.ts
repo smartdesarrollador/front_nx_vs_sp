@@ -15,11 +15,11 @@ export function useServiceAnalytics(service: AnalyticsService, days: number) {
     queryKey: ['analytics', service, days],
     queryFn: async () => {
       try {
-        const { data } = await apiClient.get<ServiceAnalytics>(
+        const { data } = await apiClient.get<{ analytics: ServiceAnalytics }>(
           `/app/digital/analytics/${service}/`,
           { params: { days } }
         );
-        return data;
+        return data.analytics;
       } catch (err) {
         if (axios.isAxiosError(err) && err.response?.status === 404) return null;
         throw err;

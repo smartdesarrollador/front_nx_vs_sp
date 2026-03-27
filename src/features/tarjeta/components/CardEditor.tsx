@@ -5,6 +5,7 @@ import { useSaveCard } from '../hooks/useSaveCard';
 import type { CardData, CardFormData } from '../types';
 
 interface FormValues {
+  username: string;
   display_name: string;
   title: string;
   bio: string;
@@ -30,8 +31,11 @@ interface CardEditorProps {
   onSaved: () => void;
 }
 
+const USERNAME_REGEX = /^[a-z0-9]([a-z0-9-]{0,48}[a-z0-9])?$/;
+
 function getDefaultValues(data: CardData | null): FormValues {
   return {
+    username: data?.profile.username ?? '',
     display_name: data?.profile.display_name ?? '',
     title: data?.profile.title ?? '',
     bio: data?.profile.bio ?? '',
@@ -111,6 +115,24 @@ export function CardEditor({ data, onSaved }: CardEditorProps) {
       <section className="bg-white dark:bg-gray-800 rounded-xl p-5 border border-gray-100 dark:border-gray-700">
         <h3 className="text-base font-semibold text-gray-900 dark:text-white mb-4">Perfil</h3>
         <div className="space-y-4">
+          <div>
+            <label className={labelClass}>Nombre de usuario *</label>
+            <input
+              {...register('username', {
+                required: 'Nombre de usuario requerido',
+                pattern: {
+                  value: USERNAME_REGEX,
+                  message: 'Solo minúsculas, números y guiones (ej: juan-perez)',
+                },
+              })}
+              className={inputClass}
+              placeholder="ej: juan-perez"
+            />
+            {errors.username && <p className={errorClass}>{errors.username.message}</p>}
+            <p className="text-xs text-gray-400 mt-0.5">
+              Tu URL pública: /tarjeta/<strong>{'{username}'}</strong>
+            </p>
+          </div>
           <div>
             <label className={labelClass}>Nombre completo *</label>
             <input

@@ -6,8 +6,8 @@ import type { QRResponse } from '../types';
 export function useGenerateQR() {
   const qc = useQueryClient();
   return useMutation({
-    mutationFn: () =>
-      apiClient.post<QRResponse>('/app/digital/tarjeta/qr/').then((r) => r.data),
+    mutationFn: (url: string) =>
+      apiClient.post<QRResponse>('/app/digital/tarjeta/qr/', { url }).then((r) => r.data),
     onSuccess: () => qc.invalidateQueries({ queryKey: ['digital-card'] }),
   });
 }

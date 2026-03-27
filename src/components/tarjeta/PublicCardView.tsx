@@ -8,9 +8,10 @@ import { VCardDownload } from './VCardDownload';
 interface Props {
   profile: PublicProfile;
   card: DigitalCard | null;
+  showVCard?: boolean;
 }
 
-export function PublicCardView({ profile, card }: Props) {
+export function PublicCardView({ profile, card, showVCard = true }: Props) {
   const primaryColor = card?.primary_color ?? '#3B82F6';
   const hasContactInfo = !!(card?.email || card?.phone);
 
@@ -74,8 +75,8 @@ export function PublicCardView({ profile, card }: Props) {
             <CardContactButton card={card} primaryColor={primaryColor} />
           )}
 
-          {/* Save contact */}
-          {card && hasContactInfo && (
+          {/* Save contact — feature gated (hidden in dashboard for free users) */}
+          {card && hasContactInfo && showVCard && (
             <VCardDownload
               profile={profile}
               card={card}
