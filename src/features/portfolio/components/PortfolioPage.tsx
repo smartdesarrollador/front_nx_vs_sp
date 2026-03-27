@@ -1,10 +1,13 @@
 'use client';
 import { useState, useMemo } from 'react';
-import { Briefcase, Copy, ExternalLink } from 'lucide-react';
+import { Briefcase, ExternalLink } from 'lucide-react';
 import { useFeatureGate } from '@/hooks/useFeatureGate';
 import { useAuthStore } from '@/store/authStore';
 import { UpgradePrompt } from '@/components/shared/UpgradePrompt';
 import { FEATURES_BY_PLAN, type Plan } from '@/data/featureGates';
+import { useDigitalCard } from '@/features/tarjeta/hooks/useDigitalCard';
+import { ProfileHero } from '@/components/portfolio/ProfileHero';
+import { PublicPortfolioGrid } from '@/components/portfolio/PublicPortfolioGrid';
 import { usePortfolioItems } from '../hooks/usePortfolioItems';
 import { useCreateItem } from '../hooks/useCreateItem';
 import { useUpdateItem } from '../hooks/useUpdateItem';
@@ -12,6 +15,8 @@ import { useDeleteItem } from '../hooks/useDeleteItem';
 import { ProjectCard } from './ProjectCard';
 import { ProjectModal } from './ProjectModal';
 import type { PortfolioItem, PortfolioForm } from '../types';
+
+type Tab = 'projects' | 'preview';
 
 interface Props {
   locale: string;
@@ -22,6 +27,7 @@ export function PortfolioPage({ locale }: Props) {
   const currentPlan = useAuthStore((s) => s.currentPlan) as Plan;
 
   const { data, isLoading } = usePortfolioItems();
+  const { data: cardData } = useDigitalCard();
   const { mutate: createItem, isPending: isCreating, error: createError } = useCreateItem();
   const { mutate: updateItem, isPending: isUpdating, error: updateError } = useUpdateItem();
   const { mutate: deleteItem } = useDeleteItem();
@@ -29,7 +35,7 @@ export function PortfolioPage({ locale }: Props) {
   const [modalOpen, setModalOpen] = useState(false);
   const [editingItem, setEditingItem] = useState<PortfolioItem | undefined>(undefined);
   const [activeTag, setActiveTag] = useState<string>('all');
-  const [copiedUrl, setCopiedUrl] = useState(false);
+  const [activeTab, setActiveTab] = useState<Tab>('projects');
 
   const items = useMemo(() => data?.items ?? [], [data]);
   const profile = data?.profile;
@@ -62,15 +68,12 @@ export function PortfolioPage({ locale }: Props) {
     );
   }
 
-  const publicUrl = profile ? `/${locale}/portafolio/${profile.username}` : null;
-
-  const handleCopyUrl = () => {
-    if (publicUrl) {
-      navigator.clipboard.writeText(window.location.origin + publicUrl);
-      setCopiedUrl(true);
-      setTimeout(() => setCopiedUrl(false), 2000);
-    }
-  };
+  const username = profile?.username ?? cardData?.profile?.username;
+  const publicUrl = username
+    ? typeof window !== 'undefined'
+      ? `${window.location.origin}/${locale}/portafolio/${username}`
+      : `/${locale}/portafolio/${username}`
+    : null;
 
   const openCreate = () => {
     setEditingItem(undefined);
@@ -101,63 +104,83 @@ export function PortfolioPage({ locale }: Props) {
       'Error al guardar el proyecto.'
     : null;
 
+  const TABS: { id: Tab; label: string }[] = [
+    { id: 'projects', label: 'Proyectos' },
+    { id: 'preview', label: 'Preview' },
+  ];
+
   return (
     <div className="p-6 max-w-5xl mx-auto space-y-6">
       {/* Header */}
       <div className="flex items-center justify-between">
         <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Portafolio Digital</h1>
-        <button
-          type="button"
-          onClick={openCreate}
-          className="rounded-lg px-4 py-2 text-sm font-medium bg-blue-600 text-white hover:bg-blue-700"
-        >
-          + Nuevo proyecto
-        </button>
-      </div>
-
-      {/* Public URL banner */}
-      {publicUrl && (
-        <div
-          className={`flex items-center justify-between rounded-lg px-4 py-3 ${
-            items.length > 0
-              ? 'bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-700'
-              : 'bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-700'
-          }`}
-        >
-          <div>
-            <p
-              className={`text-sm font-medium ${
-                items.length > 0
-                  ? 'text-blue-700 dark:text-blue-300'
-                  : 'text-yellow-700 dark:text-yellow-300'
-              }`}
-            >
-              {items.length > 0 ? 'Tu portafolio está publicado' : 'Sin proyectos publicados'}
-            </p>
-            <p className="text-xs text-gray-500 dark:text-gray-400 mt-0.5">{publicUrl}</p>
-          </div>
-          <div className="flex items-center gap-2">
-            <button
-              type="button"
-              onClick={handleCopyUrl}
-              className="flex items-center gap-1 rounded px-2 py-1 text-xs text-gray-600 dark:text-gray-300 hover:bg-white/50 dark:hover:bg-black/20"
-            >
-              <Copy size={12} />
-              {copiedUrl ? '¡Copiado!' : 'Copiar'}
-            </button>
+        <div className="flex items-center gap-3">
+          {publicUrl && (
             <a
               href={publicUrl}
               target="_blank"
               rel="noopener noreferrer"
-              className="flex items-center gap-1 rounded px-2 py-1 text-xs text-blue-600 dark:text-blue-400 hover:underline"
+              className="flex items-center gap-1.5 text-sm text-blue-600 hover:text-blue-700 dark:text-blue-400 font-medium transition-colors"
             >
-              <ExternalLink size={12} />
-              Abrir
+              Ver pública <ExternalLink size={14} />
             </a>
-          </div>
+          )}
+          <button
+            type="button"
+            onClick={openCreate}
+            className="rounded-lg px-4 py-2 text-sm font-medium bg-blue-600 text-white hover:bg-blue-700"
+          >
+            + Nuevo proyecto
+          </button>
+        </div>
+      </div>
+
+      {/* Tab bar */}
+      <div className="flex border-b border-gray-200 dark:border-gray-700">
+        {TABS.map((tab) => (
+          <button
+            key={tab.id}
+            onClick={() => setActiveTab(tab.id)}
+            className={`px-4 py-2.5 text-sm font-medium border-b-2 transition-colors ${
+              activeTab === tab.id
+                ? 'border-blue-600 text-blue-600 dark:text-blue-400 dark:border-blue-400'
+                : 'border-transparent text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300'
+            }`}
+          >
+            {tab.label}
+          </button>
+        ))}
+      </div>
+
+      {/* Tab: Preview */}
+      {activeTab === 'preview' && (
+        <div className="rounded-xl border border-gray-200 dark:border-gray-700 overflow-hidden bg-white dark:bg-gray-900">
+          <ProfileHero
+            profile={
+              profile ?? {
+                username: username ?? 'preview',
+                display_name: 'Preview',
+                title: '',
+                bio: '',
+                avatar_url: '',
+                is_public: true,
+                meta_title: '',
+                meta_description: '',
+                og_image_url: '',
+              }
+            }
+          />
+          <PublicPortfolioGrid
+            items={items}
+            locale={locale}
+            username={username ?? 'preview'}
+          />
         </div>
       )}
 
+      {/* Tab: Proyectos */}
+      {activeTab === 'projects' && (
+        <>
       {/* Tag filter pills */}
       {allTags.length > 0 && (
         <div className="flex flex-wrap gap-2">
@@ -245,6 +268,9 @@ export function PortfolioPage({ locale }: Props) {
             />
           ))}
         </div>
+      )}
+
+        </>
       )}
 
       {/* Modal */}

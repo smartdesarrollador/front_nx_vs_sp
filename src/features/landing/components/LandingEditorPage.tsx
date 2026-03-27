@@ -6,6 +6,7 @@ import { useAuthStore } from '@/store/authStore';
 import { UpgradePrompt } from '@/components/shared/UpgradePrompt';
 import type { Plan } from '@/data/featureGates';
 import { isPlanHigherThan } from '@/data/featureGates';
+import { useDigitalCard } from '@/features/tarjeta/hooks/useDigitalCard';
 import { useLandingTemplate } from '../hooks/useLandingTemplate';
 import { useSaveLanding } from '../hooks/useSaveLanding';
 import {
@@ -32,6 +33,7 @@ export function LandingEditorPage({ locale }: Props) {
   const { canAccess } = useFeatureGate('landingPage');
   const currentPlan = useAuthStore((s) => s.currentPlan) as Plan;
   const { data, isLoading } = useLandingTemplate();
+  const { data: cardData } = useDigitalCard();
   const { mutate, isPending, error } = useSaveLanding();
 
   const [activeTab, setActiveTab] = useState<Tab>('templates');
@@ -51,8 +53,11 @@ export function LandingEditorPage({ locale }: Props) {
 
   const canAdvanced = isPlanHigherThan(currentPlan, 'professional');
 
-  const publicUrl = data?.profile
-    ? `/${locale}/landing/${data.profile.username}`
+  const username = data?.profile?.username ?? cardData?.profile?.username;
+  const publicUrl = username
+    ? typeof window !== 'undefined'
+      ? `${window.location.origin}/${locale}/landing/${username}`
+      : `/${locale}/landing/${username}`
     : null;
 
   if (!canAccess) {

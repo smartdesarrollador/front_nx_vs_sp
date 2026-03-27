@@ -3,11 +3,12 @@ import type { User, TokenResponse } from '@/types/auth';
 
 type Plan = 'free' | 'starter' | 'professional' | 'enterprise';
 
-function derivePlan(roles: string[]): Plan {
-  const rolesStr = roles.join(' ').toLowerCase();
-  if (rolesStr.includes('enterprise')) return 'enterprise';
-  if (rolesStr.includes('professional')) return 'professional';
-  if (rolesStr.includes('starter')) return 'starter';
+const VALID_PLANS: Plan[] = ['free', 'starter', 'professional', 'enterprise'];
+
+function parsePlan(tenantPlan?: string): Plan {
+  if (tenantPlan && (VALID_PLANS as string[]).includes(tenantPlan)) {
+    return tenantPlan as Plan;
+  }
   return 'free';
 }
 
@@ -36,7 +37,7 @@ export const useAuthStore = create<AuthState>((set) => ({
       accessToken: tokens.access_token,
       refreshToken: tokens.refresh_token,
       isAuthenticated: true,
-      currentPlan: derivePlan(user.roles),
+      currentPlan: parsePlan(user.tenant_plan),
     });
   },
   clearAuth: () => {
@@ -50,6 +51,6 @@ export const useAuthStore = create<AuthState>((set) => ({
     });
   },
   setUser: (user) =>
-    set({ user, isAuthenticated: true, currentPlan: derivePlan(user.roles) }),
+    set({ user, isAuthenticated: true, currentPlan: parsePlan(user.tenant_plan) }),
   setAccessToken: (token) => set({ accessToken: token }),
 }));

@@ -6,6 +6,7 @@ export interface User {
   roles: string[];
   permissions: string[];
   tenant_id?: string;
+  tenant_plan?: string;
   email_verified?: boolean;
   mfa_enabled?: boolean;
   created_at?: string;

@@ -31,8 +31,8 @@ export function useSessionRestore(): void {
         localStorage.setItem('refreshToken', data.refresh_token);
         document.cookie = `accessToken=${data.access_token}; path=/; max-age=3600`;
 
-        return apiClient.get<User>('/auth/profile/').then(({ data: user }) => {
-          setUser(user);
+        return apiClient.get<{ user: User }>('/auth/profile/').then(({ data }) => {
+          setUser(data.user);
         });
       })
       .catch(() => {
