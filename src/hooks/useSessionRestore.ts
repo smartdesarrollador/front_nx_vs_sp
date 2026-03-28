@@ -23,7 +23,7 @@ export function useSessionRestore(): void {
     }
 
     publicClient
-      .post<{ access_token: string; refresh_token: string }>('/auth/token/refresh/', {
+      .post<{ access_token: string; refresh_token: string }>('/auth/refresh-token', {
         refresh_token: refresh,
       })
       .then(({ data }) => {

@@ -105,7 +105,7 @@ apiClient.interceptors.response.use(
 
     try {
       const { data } = await publicClient.post<{ access_token: string; refresh_token: string }>(
-        '/auth/token/refresh/',
+        '/auth/refresh-token',
         { refresh_token: refresh },
       );
       useAuthStore.getState().setAccessToken(data.access_token);
