@@ -1,0 +1,29 @@
+services:
+  nextjs:
+    build:
+      context: .
+      target: prod
+      args:
+        NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL}
+        NEXT_PUBLIC_APP_URL: ${NEXT_PUBLIC_APP_URL:-https://view.smartdigitaltec.com}
+        NEXT_PUBLIC_HUB_URL: ${NEXT_PUBLIC_HUB_URL:-https://hub.smartdigitaltec.com}
+    restart: unless-stopped
+    networks:
+      - dokploy-network
+    labels:
+      - "traefik.enable=true"
+      # HTTPS router
+      - "traefik.http.routers.rbac-vista.rule=Host(`${VISTA_DOMAIN}`)"
+      - "traefik.http.routers.rbac-vista.entrypoints=websecure"
+      - "traefik.http.routers.rbac-vista.service=rbac-vista"
+      # HTTP → HTTPS redirect
+      - "traefik.http.routers.rbac-vista-http.rule=Host(`${VISTA_DOMAIN}`)"
+      - "traefik.http.routers.rbac-vista-http.entrypoints=web"
+      - "traefik.http.routers.rbac-vista-http.middlewares=redirect-to-https@file"
+      - "traefik.http.routers.rbac-vista-http.service=rbac-vista"
+      # Backend service
+      - "traefik.http.services.rbac-vista.loadbalancer.server.port=3004"
+
+networks:
+  dokploy-network:
+    external: true

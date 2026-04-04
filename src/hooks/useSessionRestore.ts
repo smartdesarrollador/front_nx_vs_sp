@@ -5,7 +5,7 @@ import { publicClient, apiClient } from '@/lib/api';
 import { useAuthStore } from '@/store/authStore';
 import type { User } from '@/types/auth';
 
-const HUB_URL = process.env.NEXT_PUBLIC_HUB_URL ?? 'http://localhost:5175';
+const HUB_URL = process.env.NEXT_PUBLIC_HUB_URL ?? 'http://localhost:3003';
 
 export function useSessionRestore(): void {
   const isAuthenticated = useAuthStore((s) => s.isAuthenticated);

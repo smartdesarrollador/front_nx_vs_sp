@@ -7,7 +7,6 @@ const config: NextConfig = {
   output: 'standalone',
   images: {
     remotePatterns: [
-      { hostname: 'localhost' },
       { protocol: 'https', hostname: '**.s3.amazonaws.com' },
       { protocol: 'https', hostname: 'images.unsplash.com' },
     ],
