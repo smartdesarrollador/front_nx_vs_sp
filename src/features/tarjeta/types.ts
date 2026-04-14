@@ -20,6 +20,8 @@ export interface CardFormData {
   website_url: string;
   primary_color: string;
   background_color: string;
+  specialties: string[];
+  years_experience: number | null;
 }
 
 export interface QRResponse {

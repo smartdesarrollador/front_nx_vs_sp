@@ -44,8 +44,9 @@ export default async function TarjetaPage({ params }: Props) {
   }
 
   const { profile, digital_card } = data;
-  const bgColor = digital_card?.background_color ?? '#ffffff';
   const jsonLd = buildPersonJsonLd(profile, digital_card);
+  const baseUrl = process.env.NEXT_PUBLIC_APP_URL ?? '';
+  const publicUrl = `${baseUrl}/${locale}/tarjeta/${username}`;
 
   return (
     <>
@@ -53,28 +54,29 @@ export default async function TarjetaPage({ params }: Props) {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
-    <div
-      className="min-h-screen flex flex-col"
-      style={{ backgroundColor: bgColor }}
-    >
-      <header className="flex items-center justify-between px-6 py-4">
-        <Link
-          href={`/${locale}`}
-          className="text-xl font-bold text-primary-600 hover:text-primary-700 transition-colors"
-        >
-          Vista Digital
-        </Link>
-        <ThemeToggle />
-      </header>
+      <div className="min-h-screen flex flex-col bg-gray-50 dark:bg-gray-950">
+        <header className="flex items-center justify-between px-6 py-4">
+          <Link
+            href={`/${locale}`}
+            className="text-xl font-bold text-primary-600 hover:text-primary-700 transition-colors"
+          >
+            Vista Digital
+          </Link>
+          <ThemeToggle />
+        </header>
 
-      <main className="flex-1 flex items-start justify-center px-4 py-8">
-        <PublicCardView profile={profile} card={digital_card} />
-      </main>
+        <main className="flex-1 px-4 py-6 lg:px-8 max-w-5xl mx-auto w-full">
+          <PublicCardView
+            profile={profile}
+            card={digital_card}
+            publicUrl={publicUrl}
+          />
+        </main>
 
-      <footer className="text-center py-6 text-sm text-gray-400">
-        {t('poweredBy')}
-      </footer>
-    </div>
+        <footer className="text-center py-6 text-sm text-gray-400">
+          {t('poweredBy')}
+        </footer>
+      </div>
     </>
   );
 }

@@ -1,6 +1,7 @@
 'use client';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, KeyboardEvent } from 'react';
 import { useForm } from 'react-hook-form';
+import { X } from 'lucide-react';
 import { useSaveCard } from '../hooks/useSaveCard';
 import type { CardData, CardFormData } from '../types';
 
@@ -22,9 +23,10 @@ interface FormValues {
   website_url: string;
   primary_color: string;
   background_color: string;
+  years_experience: number | null;
 }
 
-type StringFormField = Exclude<keyof FormValues, 'is_public'>;
+type StringFormField = Exclude<keyof FormValues, 'is_public' | 'years_experience'>;
 
 interface CardEditorProps {
   data: CardData | null;
@@ -52,6 +54,7 @@ function getDefaultValues(data: CardData | null): FormValues {
     website_url: data?.digital_card?.website_url ?? '',
     primary_color: data?.digital_card?.primary_color ?? '#3B82F6',
     background_color: data?.digital_card?.background_color ?? '#FFFFFF',
+    years_experience: data?.digital_card?.years_experience ?? null,
   };
 }
 
@@ -60,6 +63,10 @@ const URL_REGEX = /^(https?:\/\/.+)?$/;
 export function CardEditor({ data, onSaved }: CardEditorProps) {
   const { mutate: saveCard, isPending, error } = useSaveCard();
   const [urlErrors, setUrlErrors] = useState<Partial<Record<StringFormField, string>>>({});
+  const [specialties, setSpecialties] = useState<string[]>(
+    data?.digital_card?.specialties ?? [] as string[],
+  );
+  const [specialtyInput, setSpecialtyInput] = useState('');
 
   const {
     register,
@@ -72,8 +79,24 @@ export function CardEditor({ data, onSaved }: CardEditorProps) {
 
   useEffect(() => {
     reset(getDefaultValues(data));
+    setSpecialties(data?.digital_card?.specialties ?? [] as string[]);
     setUrlErrors({});
   }, [data, reset]);
+
+  function handleSpecialtyKeyDown(e: KeyboardEvent<HTMLInputElement>) {
+    if (e.key === 'Enter' || e.key === ',') {
+      e.preventDefault();
+      const value = specialtyInput.trim();
+      if (value && !specialties.includes(value)) {
+        setSpecialties((prev) => [...prev, value]);
+      }
+      setSpecialtyInput('');
+    }
+  }
+
+  function removeSpecialty(index: number) {
+    setSpecialties((prev) => prev.filter((_, i) => i !== index));
+  }
 
   const urlFields: StringFormField[] = [
     'avatar_url',
@@ -99,9 +122,18 @@ export function CardEditor({ data, onSaved }: CardEditorProps) {
       return;
     }
     setUrlErrors({});
-    saveCard(values as CardFormData, {
-      onSuccess: () => onSaved(),
-    });
+    saveCard(
+      {
+        ...(values as Omit<CardFormData, 'specialties'>),
+        specialties,
+        years_experience: values.years_experience
+          ? Number(values.years_experience)
+          : null,
+      } as CardFormData,
+      {
+        onSuccess: () => onSaved(),
+      },
+    );
   };
 
   const inputClass =
@@ -220,7 +252,7 @@ export function CardEditor({ data, onSaved }: CardEditorProps) {
               { field: 'github_url', label: 'GitHub', placeholder: 'https://github.com/...' },
               { field: 'instagram_url', label: 'Instagram', placeholder: 'https://instagram.com/...' },
               { field: 'facebook_url', label: 'Facebook', placeholder: 'https://facebook.com/...' },
-              { field: 'website_url', label: 'Sitio Web', placeholder: 'https://...' },
+              { field: 'website_url', label: 'Portafolio / Sitio Web', placeholder: 'https://...' },
             ] as { field: StringFormField; label: string; placeholder: string }[]
           ).map(({ field, label, placeholder }) => (
             <div key={field}>
@@ -232,7 +264,70 @@ export function CardEditor({ data, onSaved }: CardEditorProps) {
         </div>
       </section>
 
-      {/* Seccion 4: Tema */}
+      {/* Seccion 4: Especialidades y experiencia */}
+      <section className="bg-white dark:bg-gray-800 rounded-xl p-5 border border-gray-100 dark:border-gray-700">
+        <h3 className="text-base font-semibold text-gray-900 dark:text-white mb-4">
+          Perfil Profesional
+        </h3>
+        <div className="space-y-4">
+          {/* Specialties tag input */}
+          <div>
+            <label className={labelClass}>Especialidades</label>
+            <div className="flex flex-wrap gap-2 mb-2">
+              {specialties.map((s, i) => (
+                <span
+                  key={i}
+                  className="inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-700 dark:bg-blue-900/40 dark:text-blue-300"
+                >
+                  {s}
+                  <button
+                    type="button"
+                    onClick={() => removeSpecialty(i)}
+                    className="hover:text-blue-900 dark:hover:text-blue-100"
+                    aria-label={`Eliminar ${s}`}
+                  >
+                    <X className="w-3 h-3" />
+                  </button>
+                </span>
+              ))}
+            </div>
+            <input
+              value={specialtyInput}
+              onChange={(e) => setSpecialtyInput(e.target.value)}
+              onKeyDown={handleSpecialtyKeyDown}
+              className={inputClass}
+              placeholder="Escribe una especialidad y presiona Enter"
+            />
+            <p className="text-xs text-gray-400 mt-0.5">
+              Presiona Enter o coma (,) para agregar cada especialidad
+            </p>
+          </div>
+
+          {/* Years of experience */}
+          <div className="max-w-[180px]">
+            <label className={labelClass}>Años de experiencia</label>
+            <input
+              type="number"
+              min={0}
+              max={60}
+              {...register('years_experience', {
+                min: { value: 0, message: 'Mínimo 0' },
+                max: { value: 60, message: 'Máximo 60' },
+              })}
+              className={inputClass}
+              placeholder="Ej: 4"
+            />
+            {errors.years_experience && (
+              <p className={errorClass}>{errors.years_experience.message}</p>
+            )}
+            <p className="text-xs text-gray-400 mt-0.5">
+              Se mostrará como &quot;4+ años de experiencia&quot;
+            </p>
+          </div>
+        </div>
+      </section>
+
+      {/* Seccion 5: Tema */}
       <section className="bg-white dark:bg-gray-800 rounded-xl p-5 border border-gray-100 dark:border-gray-700">
         <h3 className="text-base font-semibold text-gray-900 dark:text-white mb-4">Tema</h3>
         <div className="flex gap-6">

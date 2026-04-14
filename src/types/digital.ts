@@ -23,6 +23,8 @@ export interface DigitalCard {
   primary_color: string;
   background_color: string;
   qr_code_url: string;
+  specialties: string[];
+  years_experience: number | null;
 }
 
 export interface PublicCardResponse {

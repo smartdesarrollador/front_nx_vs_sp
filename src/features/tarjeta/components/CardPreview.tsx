@@ -17,7 +17,6 @@ interface CardPreviewProps {
 export function CardPreview({ data, isLoading, locale }: CardPreviewProps) {
   const { mutate: regenerateQR, isPending: isRegenerating } = useGenerateQR();
   const { canAccess: canAccessQR } = useFeatureGate('digitalCardQR');
-  const { canAccess: canAccessVCard } = useFeatureGate('digitalCardVCard');
 
   if (isLoading) {
     return (
@@ -55,7 +54,7 @@ export function CardPreview({ data, isLoading, locale }: CardPreviewProps) {
       <PublicCardView
         profile={data.profile}
         card={data.digital_card}
-        showVCard={canAccessVCard}
+        publicUrl={publicUrl}
       />
       {canAccessQR ? (
         <QRDisplay
