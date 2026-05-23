@@ -5,8 +5,8 @@ services:
       target: prod
       args:
         NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL}
-        NEXT_PUBLIC_APP_URL: ${NEXT_PUBLIC_APP_URL:-https://view.smartdigitaltec.com}
-        NEXT_PUBLIC_HUB_URL: ${NEXT_PUBLIC_HUB_URL:-https://hub.smartdigitaltec.com}
+        NEXT_PUBLIC_APP_URL: ${NEXT_PUBLIC_APP_URL:-https://view.siderdigital.com}
+        NEXT_PUBLIC_HUB_URL: ${NEXT_PUBLIC_HUB_URL:-https://hub.siderdigital.com}
     restart: unless-stopped
     networks:
       - dokploy-network
