@@ -19,7 +19,8 @@ ARG NEXT_PUBLIC_HUB_URL
 ENV NEXT_PUBLIC_API_URL=${NEXT_PUBLIC_API_URL}
 ENV NEXT_PUBLIC_APP_URL=${NEXT_PUBLIC_APP_URL}
 ENV NEXT_PUBLIC_HUB_URL=${NEXT_PUBLIC_HUB_URL}
-RUN npm run build
+ENV NEXT_TELEMETRY_DISABLED=1
+RUN NODE_OPTIONS="--max-old-space-size=1536" npm run build
 
 # ── Stage 4: producción (Next.js standalone) ──────────────
 FROM node:20-alpine AS prod

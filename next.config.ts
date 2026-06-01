@@ -17,7 +17,10 @@ const config: NextConfig = {
       { protocol: 'https', hostname: 'images.unsplash.com' },
     ],
   },
-  typedRoutes: true,
+  experimental: {
+    workerThreads: false,
+    cpus: 1,
+  },
 };
 
 export default withNextIntl(config);
