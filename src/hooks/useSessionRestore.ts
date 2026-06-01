@@ -3,7 +3,7 @@
 import { useEffect } from 'react';
 import { publicClient, apiClient } from '@/lib/api';
 import { useAuthStore } from '@/store/authStore';
-import type { User } from '@/types/auth';
+import type { User, TenantBranding } from '@/types/auth';
 
 const HUB_URL = process.env.NEXT_PUBLIC_HUB_URL ?? 'http://localhost:3003';
 
@@ -11,6 +11,7 @@ export function useSessionRestore(): void {
   const isAuthenticated = useAuthStore((s) => s.isAuthenticated);
   const setAccessToken = useAuthStore((s) => s.setAccessToken);
   const setUser = useAuthStore((s) => s.setUser);
+  const setTenant = useAuthStore((s) => s.setTenant);
   const clearAuth = useAuthStore((s) => s.clearAuth);
 
   useEffect(() => {
@@ -31,9 +32,12 @@ export function useSessionRestore(): void {
         localStorage.setItem('refreshToken', data.refresh_token);
         document.cookie = `accessToken=${data.access_token}; path=/; max-age=3600`;
 
-        return apiClient.get<{ user: User }>('/auth/profile/').then(({ data }) => {
-          setUser(data.user);
-        });
+        return apiClient
+          .get<{ user: User; tenant: TenantBranding }>('/auth/profile/')
+          .then(({ data }) => {
+            setUser(data.user);
+            if (data.tenant) setTenant(data.tenant);
+          });
       })
       .catch(() => {
         clearAuth();

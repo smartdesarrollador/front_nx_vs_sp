@@ -12,6 +12,15 @@ export interface User {
   created_at?: string;
 }
 
+export interface TenantBranding {
+  id: string;
+  name: string;
+  subdomain: string;
+  plan: string;
+  logo_url?: string | null;
+  favicon_url?: string | null;
+}
+
 export interface TokenResponse {
   access_token: string;
   refresh_token: string;

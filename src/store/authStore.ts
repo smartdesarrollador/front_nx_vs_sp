@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import type { User, TokenResponse } from '@/types/auth';
+import type { User, TenantBranding, TokenResponse } from '@/types/auth';
 
 type Plan = 'free' | 'starter' | 'professional' | 'enterprise';
 
@@ -14,6 +14,7 @@ function parsePlan(tenantPlan?: string): Plan {
 
 interface AuthState {
   user: User | null;
+  tenant: TenantBranding | null;
   accessToken: string | null;
   refreshToken: string | null;
   isAuthenticated: boolean;
@@ -21,11 +22,13 @@ interface AuthState {
   setAuth: (tokens: TokenResponse, user: User) => void;
   clearAuth: () => void;
   setUser: (user: User) => void;
+  setTenant: (tenant: TenantBranding) => void;
   setAccessToken: (token: string) => void;
 }
 
 export const useAuthStore = create<AuthState>((set) => ({
   user: null,
+  tenant: null,
   accessToken: null,
   refreshToken: null,
   isAuthenticated: false,
@@ -44,6 +47,7 @@ export const useAuthStore = create<AuthState>((set) => ({
     localStorage.removeItem('refreshToken');
     set({
       user: null,
+      tenant: null,
       accessToken: null,
       refreshToken: null,
       isAuthenticated: false,
@@ -52,5 +56,6 @@ export const useAuthStore = create<AuthState>((set) => ({
   },
   setUser: (user) =>
     set({ user, isAuthenticated: true, currentPlan: parsePlan(user.tenant_plan) }),
+  setTenant: (tenant) => set({ tenant }),
   setAccessToken: (token) => set({ accessToken: token }),
 }));

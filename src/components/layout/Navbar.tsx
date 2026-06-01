@@ -7,6 +7,7 @@ import { useTheme } from 'next-themes';
 import { Menu, Home, Sun, Moon, LogOut } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { useAuth } from '@/hooks/useAuth';
+import { useAuthStore } from '@/store/authStore';
 import { PlanBadge } from '@/components/shared/PlanBadge';
 import type { Plan } from '@/data/featureGates';
 
@@ -36,6 +37,7 @@ const HUB_URL = process.env.NEXT_PUBLIC_HUB_URL ?? '';
 export function Navbar({ onToggleSidebar, locale }: NavbarProps) {
   const t = useTranslations('nav');
   const { user, currentPlan, clearAuth } = useAuth();
+  const tenant = useAuthStore((s) => s.tenant);
   const { theme, setTheme } = useTheme();
   const pathname = usePathname();
   const [mounted, setMounted] = useState(false);
@@ -70,8 +72,16 @@ export function Navbar({ onToggleSidebar, locale }: NavbarProps) {
             href={`/${locale}/dashboard`}
             className="flex items-center gap-2 font-semibold text-gray-900 dark:text-white hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
           >
-            <Home size={20} className="text-blue-600" />
-            <span>{t('home')}</span>
+            {tenant?.logo_url ? (
+              <img
+                src={tenant.logo_url}
+                alt={tenant.name}
+                className="h-7 w-auto object-contain"
+              />
+            ) : (
+              <Home size={20} className="text-blue-600" />
+            )}
+            <span>{tenant?.name ?? t('home')}</span>
           </Link>
 
           {/* Breadcrumb */}
