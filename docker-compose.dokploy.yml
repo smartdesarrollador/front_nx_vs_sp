@@ -8,8 +8,17 @@ services:
         NEXT_PUBLIC_APP_URL: ${NEXT_PUBLIC_APP_URL:-https://view.digisider.com}
         NEXT_PUBLIC_HUB_URL: ${NEXT_PUBLIC_HUB_URL:-https://digisider.com}
     restart: unless-stopped
+    environment:
+      NODE_OPTIONS: --max-old-space-size=256
     networks:
       - dokploy-network
+    deploy:
+      resources:
+        limits:
+          cpus: '0.4'
+          memory: 384M
+        reservations:
+          memory: 128M
     labels:
       - "traefik.enable=true"
       # HTTPS router
