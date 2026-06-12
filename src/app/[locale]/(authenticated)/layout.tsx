@@ -60,7 +60,7 @@ export default function AuthenticatedLayout({ children, params }: AuthenticatedL
       <main
         className={cn(
           'pt-16 transition-all duration-300',
-          sidebarCollapsed ? 'lg:ml-16' : 'lg:ml-64'
+          sidebarCollapsed ? 'md:ml-16' : 'md:ml-64'
         )}
       >
         {children}

@@ -48,7 +48,7 @@ const SERVICES: ServiceDefinition[] = [
     icon: Briefcase,
     title: 'Portafolio Digital',
     description: 'Muestra tus proyectos con galerías de imágenes y categorías personalizadas.',
-    href: (locale) => `/${locale}/dashboard/portafolio`,
+    href: (locale) => `/${locale}/dashboard/portfolio`,
     hasConfigured: (p) => p?.has_portfolio ?? false,
     isPublished: (p) => p?.portfolio_published ?? false,
   },

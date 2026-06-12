@@ -99,7 +99,7 @@ apiClient.interceptors.response.use(
       useAuthStore.getState().clearAuth();
       processQueue(error, null);
       isRefreshing = false;
-      window.location.href = HUB_URL;
+      window.location.href = `${HUB_URL}/login?next=vista`;
       return Promise.reject(error);
     }
 
@@ -117,7 +117,7 @@ apiClient.interceptors.response.use(
     } catch (err) {
       processQueue(err, null);
       useAuthStore.getState().clearAuth();
-      window.location.href = HUB_URL;
+      window.location.href = `${HUB_URL}/login?next=vista`;
       return Promise.reject(err);
     } finally {
       isRefreshing = false;

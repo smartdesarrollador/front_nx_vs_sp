@@ -12,7 +12,7 @@ export default function middleware(req: NextRequest) {
     const token = req.cookies.get('accessToken');
     if (!token) {
       const hubUrl = process.env.NEXT_PUBLIC_HUB_URL ?? 'http://localhost:3003';
-      return NextResponse.redirect(hubUrl);
+      return NextResponse.redirect(`${hubUrl}/login?next=vista`);
     }
   }
 
