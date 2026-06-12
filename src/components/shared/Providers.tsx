@@ -13,7 +13,7 @@ export function Providers({ children }: ProvidersProps) {
   const [queryClient] = useState(() => new QueryClient(queryClientConfig));
 
   return (
-    <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
+    <ThemeProvider attribute="class" defaultTheme="light" storageKey="vista-theme">
       <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
     </ThemeProvider>
   );

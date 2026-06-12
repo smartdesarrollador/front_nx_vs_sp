@@ -91,7 +91,7 @@ function NavItemRow({
       className={cn(
         'flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm transition-colors',
         isActive
-          ? 'bg-blue-50 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400'
+          ? 'bg-primary-50 text-primary-700 dark:bg-primary-900/30 dark:text-primary-400'
           : 'text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-700/50'
       )}
       title={label}
@@ -101,7 +101,7 @@ function NavItemRow({
         <>
           <span className="flex-1">{label}</span>
           {isActive && (
-            <span className="h-1.5 w-1.5 rounded-full bg-blue-600 dark:bg-blue-400 shrink-0" />
+            <span className="h-1.5 w-1.5 rounded-full bg-primary-600 dark:bg-primary-400 shrink-0" />
           )}
         </>
       )}
@@ -180,7 +180,7 @@ export function Sidebar({ isOpen, isCollapsed, onClose, onCollapsedChange, local
           className={cn(
             'flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm mb-4 transition-colors',
             pathname === `/${locale}/dashboard` || pathname === `/${locale}/dashboard/`
-              ? 'bg-blue-50 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400'
+              ? 'bg-primary-50 text-primary-700 dark:bg-primary-900/30 dark:text-primary-400'
               : 'text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-700/50'
           )}
           title={t('dashboard')}
@@ -212,7 +212,7 @@ export function Sidebar({ isOpen, isCollapsed, onClose, onCollapsedChange, local
         <div className="p-3 border-t border-gray-200 dark:border-gray-700">
           <a
             href={`${HUB_URL}/subscription`}
-            className="flex items-center gap-2 rounded-lg bg-gradient-to-r from-blue-600 to-purple-600 px-3 py-2.5 text-sm font-medium text-white hover:opacity-90 transition-opacity"
+            className="flex items-center gap-2 rounded-lg bg-gradient-to-r from-primary-600 to-primary-900 px-3 py-2.5 text-sm font-medium text-white hover:opacity-90 transition-opacity"
           >
             <Zap size={16} />
             <span>{t('upgrade')}</span>

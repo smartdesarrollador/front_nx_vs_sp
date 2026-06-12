@@ -41,7 +41,7 @@ export default function AuthenticatedLayout({ children, params }: AuthenticatedL
   }, [tenant?.favicon_url]);
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
+    <div className="min-h-screen bg-[#EAF1F8] dark:bg-[#071D2E]">
       <Navbar
         onToggleSidebar={() => setSidebarOpen((prev) => !prev)}
         locale={locale}

@@ -1,5 +1,6 @@
 'use client';
 
+import Link from 'next/link';
 import { Lock } from 'lucide-react';
 import { getPlanDisplayName } from '@/data/featureGates';
 import type { FeatureKey } from '@/data/featureGates';
@@ -69,10 +70,10 @@ export function ServiceCard({
   }
 
   return (
-    <div className="group flex flex-col gap-4 rounded-xl border border-gray-200 bg-white p-6 shadow-sm transition-all hover:border-blue-300 hover:shadow-md dark:border-gray-700 dark:bg-gray-800 dark:hover:border-blue-600">
+    <div className="group flex flex-col gap-4 rounded-xl border border-gray-200 bg-white p-6 shadow-sm transition-all hover:border-primary-300 hover:shadow-md dark:border-gray-700 dark:bg-gray-800 dark:hover:border-primary-600">
       <div className="flex items-start justify-between">
         <div className="flex h-14 w-14 items-center justify-center rounded-xl bg-gray-50 transition-transform group-hover:scale-105 dark:bg-gray-700">
-          <Icon className="h-7 w-7 text-blue-600 dark:text-blue-400" />
+          <Icon className="h-7 w-7 text-primary-600 dark:text-primary-400" />
         </div>
         {isConfigured && (
           <span
@@ -92,14 +93,14 @@ export function ServiceCard({
         <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">{description}</p>
       </div>
 
-      <a
+      <Link
         href={href}
         className={`mt-auto block w-full rounded-lg px-4 py-2 text-center text-sm font-medium text-white transition-opacity hover:opacity-90 ${
-          isConfigured ? 'bg-green-600' : 'bg-blue-600'
+          isConfigured ? 'bg-green-600' : 'bg-primary-600'
         }`}
       >
         {isConfigured ? 'Editar →' : 'Configurar →'}
-      </a>
+      </Link>
     </div>
   );
 }
