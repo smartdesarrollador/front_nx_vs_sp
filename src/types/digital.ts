@@ -39,13 +39,24 @@ export type LandingSectionType =
   | 'services'
   | 'testimonials'
   | 'stats'
-  | 'contact';
+  | 'contact'
+  | 'faq'
+  | 'features';
 
 export type LandingTemplateType = 'basic' | 'minimal' | 'corporate' | 'creative';
 
 export interface LandingSection {
   type: LandingSectionType;
   content: Record<string, unknown>;
+}
+
+export interface LandingSocialLinks {
+  linkedin?: string;
+  github?: string;
+  twitter?: string;
+  instagram?: string;
+  website?: string;
+  tiktok?: string;
 }
 
 export interface LandingTemplate {
@@ -55,6 +66,8 @@ export interface LandingTemplate {
   enable_contact_form: boolean;
   custom_css: string;
   ga_tracking_id: string;
+  social_links?: LandingSocialLinks;
+  accent_color?: string;
 }
 
 export interface PublicLandingResponse {

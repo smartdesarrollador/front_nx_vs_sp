@@ -197,6 +197,76 @@ export function LandingEditorPage({ locale }: Props) {
               </span>
             </label>
 
+            {/* Redes sociales */}
+            <div>
+              <label className={labelClass}>Redes sociales</label>
+              <div className="grid grid-cols-2 gap-3">
+                {(
+                  [
+                    { key: 'linkedin', placeholder: 'https://linkedin.com/in/...' },
+                    { key: 'github', placeholder: 'https://github.com/...' },
+                    { key: 'twitter', placeholder: 'https://twitter.com/...' },
+                    { key: 'instagram', placeholder: 'https://instagram.com/...' },
+                    { key: 'website', placeholder: 'https://miweb.com' },
+                    { key: 'tiktok', placeholder: 'https://tiktok.com/@...' },
+                  ] as const
+                ).map(({ key, placeholder }) => (
+                  <div key={key}>
+                    <label className="block text-xs font-medium text-gray-500 dark:text-gray-400 mb-1 capitalize">
+                      {key}
+                    </label>
+                    <input
+                      className={inputClass}
+                      placeholder={placeholder}
+                      value={formState.social_links?.[key] ?? ''}
+                      onChange={(e) =>
+                        setFormState((s) => ({
+                          ...s,
+                          social_links: { ...s.social_links, [key]: e.target.value },
+                        }))
+                      }
+                    />
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Color de acento */}
+            <div>
+              <label className={labelClass}>Color de acento</label>
+              <div className="flex items-center gap-3">
+                <input
+                  type="color"
+                  value={formState.accent_color || '#2563eb'}
+                  onChange={(e) =>
+                    setFormState((s) => ({ ...s, accent_color: e.target.value }))
+                  }
+                  className="w-10 h-10 rounded-lg border border-gray-200 dark:border-gray-600 cursor-pointer p-0.5 bg-white dark:bg-gray-700"
+                />
+                <input
+                  className={`${inputClass} font-mono uppercase`}
+                  value={formState.accent_color}
+                  placeholder="#2563eb"
+                  maxLength={7}
+                  onChange={(e) =>
+                    setFormState((s) => ({ ...s, accent_color: e.target.value }))
+                  }
+                />
+                {formState.accent_color && (
+                  <button
+                    type="button"
+                    onClick={() => setFormState((s) => ({ ...s, accent_color: '' }))}
+                    className="text-xs text-gray-400 hover:text-gray-600 whitespace-nowrap"
+                  >
+                    Restablecer
+                  </button>
+                )}
+              </div>
+              <p className="text-xs text-gray-400 mt-1">
+                Personaliza el color de servicios, estadísticas y botones
+              </p>
+            </div>
+
             {/* Custom CSS — professional+ only */}
             <div>
               <div className="flex items-center gap-2 mb-1">

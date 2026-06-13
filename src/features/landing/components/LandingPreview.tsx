@@ -29,6 +29,8 @@ export function LandingPreview({ profile, formState, isLoading }: Props) {
     enable_contact_form: formState.enable_contact_form,
     custom_css: '',
     ga_tracking_id: '',
+    social_links: formState.social_links ?? {},
+    accent_color: formState.accent_color ?? '',
   };
 
   const fakeProfile: PublicProfile = {

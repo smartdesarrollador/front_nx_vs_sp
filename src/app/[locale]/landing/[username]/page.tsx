@@ -6,6 +6,9 @@ import { getPublicLanding } from '@/lib/publicApi';
 import { buildWebPageJsonLd } from '@/lib/seo';
 import { PublicLandingNav } from '@/components/landing/PublicLandingNav';
 import { PublicLandingView } from '@/components/landing/PublicLandingView';
+import { PublicLandingFooter } from '@/components/landing/PublicLandingFooter';
+import type { LandingSocialLinks } from '@/types/digital';
+import type { HeroContent } from '@/features/landing/types';
 
 interface Props {
   params: Promise<{ locale: string; username: string }>;
@@ -37,8 +40,15 @@ export default async function LandingPage({ params }: Props) {
   const { profile, landing } = data;
   const jsonLd = buildWebPageJsonLd(profile, landing);
 
+  const heroSection = landing.sections.find((s) => s.type === 'hero');
+  const heroContent = heroSection?.content as HeroContent | undefined;
+  const ctaText = heroContent?.ctaText;
+  const ctaUrl = heroContent?.ctaUrl;
+
+  const socialLinks = (landing.social_links ?? {}) as LandingSocialLinks;
+
   return (
-    <div className="min-h-screen flex flex-col bg-white dark:bg-gray-900">
+    <div className="min-h-screen flex flex-col bg-white dark:bg-gray-900 scroll-smooth">
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
@@ -56,13 +66,19 @@ export default async function LandingPage({ params }: Props) {
         sections={landing.sections}
         profileName={profile.display_name}
         locale={locale}
+        ctaText={ctaText}
+        ctaUrl={ctaUrl}
       />
       <main className="flex-1 pt-16">
         <PublicLandingView profile={profile} landing={landing} />
       </main>
-      <footer className="text-center py-6 text-sm text-gray-400 border-t border-gray-100 dark:border-gray-800">
-        {t('poweredBy')}
-      </footer>
+      <PublicLandingFooter
+        displayName={profile.display_name}
+        username={username}
+        socialLinks={socialLinks}
+        locale={locale}
+        poweredByText={t('poweredBy')}
+      />
     </div>
   );
 }

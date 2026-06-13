@@ -1,4 +1,4 @@
-import type { LandingSection, LandingSectionType, LandingTemplateType } from '@/types/digital';
+import type { LandingSection, LandingSectionType, LandingSocialLinks, LandingTemplateType } from '@/types/digital';
 import type { Plan } from '@/data/featureGates';
 
 // Tipos de contenido por sección
@@ -8,17 +8,21 @@ export interface HeroContent {
   ctaText: string;
   ctaUrl: string;
   alignment: 'left' | 'center' | 'right';
+  badge?: string;
 }
 export interface AboutContent {
   title: string;
   text: string;
   imageUrl: string;
   layout: 'image-left' | 'image-right';
+  highlights?: string[];
+  skills?: string[];
 }
 export interface ServiceItem {
   icon: string;
   title: string;
   description: string;
+  link?: string;
 }
 export interface ServicesContent {
   title: string;
@@ -29,6 +33,8 @@ export interface TestimonialItem {
   role: string;
   text: string;
   rating: number;
+  avatarUrl?: string;
+  company?: string;
 }
 export interface TestimonialsContent {
   title: string;
@@ -50,6 +56,25 @@ export interface ContactContent {
   address: string;
   showForm: boolean;
 }
+export interface FAQItem {
+  question: string;
+  answer: string;
+}
+export interface FAQContent {
+  title?: string;
+  items: FAQItem[];
+}
+export interface FeatureItem {
+  icon?: string;
+  title: string;
+  description: string;
+  highlight?: string;
+}
+export interface FeaturesContent {
+  title?: string;
+  subtitle?: string;
+  items: FeatureItem[];
+}
 
 // Estado local de trabajo (copia mutable antes de guardar)
 export interface LandingFormState {
@@ -60,6 +85,8 @@ export interface LandingFormState {
   custom_css: string;
   ga_tracking_id: string;
   is_public: boolean;
+  social_links: LandingSocialLinks;
+  accent_color: string;
 }
 
 // Respuesta GET /app/digital/landing/
@@ -76,26 +103,44 @@ export const DEFAULT_SECTION_CONTENT: Record<LandingSectionType, Record<string, 
     ctaText: 'Contáctame',
     ctaUrl: '',
     alignment: 'center',
+    badge: '',
   },
   about: {
     title: 'Sobre mí',
     text: 'Cuéntale al mundo quién eres...',
     imageUrl: '',
     layout: 'image-right',
+    highlights: [],
+    skills: [],
   },
   services: {
     title: 'Mis Servicios',
-    items: [{ icon: 'star', title: 'Servicio 1', description: 'Descripción breve' }],
+    items: [{ icon: 'star', title: 'Servicio 1', description: 'Descripción breve', link: '' }],
   },
   testimonials: {
     title: 'Testimonios',
-    items: [{ name: 'Cliente', role: 'Cargo', text: '¡Gran trabajo!', rating: 5 }],
+    items: [{ name: 'Cliente', role: 'Cargo', company: '', text: '¡Gran trabajo!', rating: 5, avatarUrl: '' }],
   },
   stats: {
     title: 'Logros',
     items: [{ icon: 'briefcase', value: '10+', label: 'Proyectos' }],
   },
   contact: { title: 'Contacto', email: '', phone: '', address: '', showForm: false },
+  faq: {
+    title: 'Preguntas frecuentes',
+    items: [
+      { question: '¿Cuál es tu especialidad?', answer: 'Escribe aquí tu respuesta...' },
+    ],
+  },
+  features: {
+    title: '¿Por qué elegirnos?',
+    subtitle: 'Lo que nos hace diferentes',
+    items: [
+      { icon: 'zap', title: 'Rápido y eficiente', description: 'Entregamos resultados en tiempo récord sin sacrificar calidad.', highlight: '' },
+      { icon: 'star', title: 'Alta calidad', description: 'Cada proyecto recibe nuestra atención total y estándares exigentes.', highlight: 'Popular' },
+      { icon: 'users', title: 'Equipo dedicado', description: 'Profesionales comprometidos con el éxito de tu proyecto.', highlight: '' },
+    ],
+  },
 };
 
 // Metadatos de cada tipo de sección
@@ -128,6 +173,16 @@ export const SECTION_META: Record<
     label: 'Contacto',
     icon: 'mail',
     description: 'Información de contacto o formulario',
+  },
+  faq: {
+    label: 'FAQ',
+    icon: 'help-circle',
+    description: 'Preguntas y respuestas frecuentes',
+  },
+  features: {
+    label: 'Características',
+    icon: 'zap',
+    description: 'Destaca tus ventajas diferenciales',
   },
 };
 
@@ -177,4 +232,6 @@ export const DEFAULT_FORM_STATE: LandingFormState = {
   custom_css: '',
   ga_tracking_id: '',
   is_public: false,
+  social_links: {},
+  accent_color: '',
 };

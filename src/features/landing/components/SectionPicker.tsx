@@ -1,5 +1,5 @@
 'use client';
-import { X, Layout, User, Briefcase, Quote, BarChart2, Mail, type LucideProps } from 'lucide-react';
+import { X, Layout, User, Briefcase, Quote, BarChart2, Mail, HelpCircle, Zap, type LucideProps } from 'lucide-react';
 import type { ForwardRefExoticComponent, RefAttributes } from 'react';
 import type { LandingSectionType } from '@/types/digital';
 import { SECTION_META } from '../types';
@@ -18,6 +18,8 @@ const SECTION_TYPES: LandingSectionType[] = [
   'testimonials',
   'stats',
   'contact',
+  'faq',
+  'features',
 ];
 
 type LucideIcon = ForwardRefExoticComponent<Omit<LucideProps, 'ref'> & RefAttributes<SVGSVGElement>>;
@@ -29,6 +31,8 @@ const ICON_MAP: Record<string, LucideIcon> = {
   quote: Quote,
   'bar-chart': BarChart2,
   mail: Mail,
+  'help-circle': HelpCircle,
+  zap: Zap,
 };
 
 export function SectionPicker({ isOpen, existingSectionTypes, onAdd, onClose }: Props) {

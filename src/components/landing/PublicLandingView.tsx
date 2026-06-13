@@ -1,15 +1,21 @@
-import type { PublicProfile, LandingTemplate, LandingSectionType } from '@/types/digital';
+import type { PublicProfile, LandingTemplate, LandingSectionType, LandingSocialLinks } from '@/types/digital';
 import type { ComponentType } from 'react';
 import { HeroSection } from './sections/HeroSection';
+import type { HeroSectionProps } from './sections/HeroSection';
 import { AboutSection } from './sections/AboutSection';
 import { ServicesSection } from './sections/ServicesSection';
 import { TestimonialsSection } from './sections/TestimonialsSection';
 import { StatsSection } from './sections/StatsSection';
 import { ContactSection } from './sections/ContactSection';
+import { FAQSection } from './sections/FAQSection';
+import { FeaturesSection } from './sections/FeaturesSection';
 
 export interface SectionProps {
   content: Record<string, unknown>;
   templateType: LandingTemplate['template_type'];
+  profile?: PublicProfile;
+  socialLinks?: LandingSocialLinks;
+  accentColor?: string;
 }
 
 export interface ContactSectionProps extends SectionProps {
@@ -18,11 +24,12 @@ export interface ContactSectionProps extends SectionProps {
 }
 
 const SECTION_MAP: Partial<Record<LandingSectionType, ComponentType<SectionProps>>> = {
-  hero: HeroSection,
   about: AboutSection,
   services: ServicesSection,
   testimonials: TestimonialsSection,
   stats: StatsSection,
+  faq: FAQSection,
+  features: FeaturesSection,
 };
 
 interface Props {
@@ -30,10 +37,26 @@ interface Props {
   landing: LandingTemplate;
 }
 
-export function PublicLandingView({ profile: _profile, landing }: Props) {
+export function PublicLandingView({ profile, landing }: Props) {
+  const socialLinks = (landing.social_links ?? {}) as LandingSocialLinks;
+  const accentColor = landing.accent_color || undefined;
+
   return (
     <div>
       {landing.sections.map((section, index) => {
+        if (section.type === 'hero') {
+          return (
+            <HeroSection
+              key={index}
+              content={section.content}
+              templateType={landing.template_type}
+              profile={profile}
+              socialLinks={socialLinks}
+              accentColor={accentColor}
+            />
+          );
+        }
+
         if (section.type === 'contact') {
           return (
             <ContactSection
@@ -42,9 +65,11 @@ export function PublicLandingView({ profile: _profile, landing }: Props) {
               templateType={landing.template_type}
               enableContactForm={landing.enable_contact_form}
               contactEmail={landing.contact_email}
+              socialLinks={socialLinks}
             />
           );
         }
+
         const Section = SECTION_MAP[section.type];
         if (!Section) return null;
         return (
@@ -52,6 +77,7 @@ export function PublicLandingView({ profile: _profile, landing }: Props) {
             key={index}
             content={section.content}
             templateType={landing.template_type}
+            accentColor={accentColor}
           />
         );
       })}
