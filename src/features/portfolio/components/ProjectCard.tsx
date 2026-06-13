@@ -12,6 +12,11 @@ export const CARD_GRADIENTS = [
   'from-rose-500 to-pink-600',
 ];
 
+const CATEGORY_LABELS: Record<string, string> = {
+  web: 'Web', mobile: 'Mobile', design: 'Diseño', branding: 'Branding',
+  data: 'Datos', consulting: 'Consultoría', other: 'Otro',
+};
+
 interface Props {
   item: PortfolioItem;
   index: number;
@@ -23,6 +28,7 @@ interface Props {
 export function ProjectCard({ item, index, onEdit, onDelete, canDelete }: Props) {
   const [confirming, setConfirming] = useState(false);
   const gradient = CARD_GRADIENTS[index % CARD_GRADIENTS.length];
+  const categoryLabel = item.category ? CATEGORY_LABELS[item.category] : null;
 
   return (
     <div className="group rounded-xl overflow-hidden border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 shadow-sm hover:shadow-md transition-shadow">
@@ -41,22 +47,59 @@ export function ProjectCard({ item, index, onEdit, onDelete, canDelete }: Props)
             ★ Destacado
           </span>
         )}
-        {!item.is_published && (
-          <span className="absolute top-2 right-2 rounded-full bg-gray-600/80 px-2 py-0.5 text-xs font-medium text-gray-100">
-            Borrador
-          </span>
-        )}
+        <div className="absolute top-2 right-2 flex flex-col items-end gap-1">
+          {!item.is_published && (
+            <span className="rounded-full bg-gray-600/80 px-2 py-0.5 text-xs font-medium text-gray-100">
+              Borrador
+            </span>
+          )}
+          {categoryLabel && (
+            <span className="rounded-full bg-orange-500/90 px-2 py-0.5 text-xs font-medium text-white">
+              {categoryLabel}
+            </span>
+          )}
+        </div>
       </div>
 
       {/* Content */}
       <div className="p-4 space-y-2">
-        <h3 className="font-semibold text-gray-900 dark:text-white text-sm leading-tight">
-          {item.title}
-        </h3>
+        <div className="flex items-start justify-between gap-2">
+          <h3 className="font-semibold text-gray-900 dark:text-white text-sm leading-tight">
+            {item.title}
+          </h3>
+          {item.status === 'in_progress' && (
+            <span className="flex items-center gap-1 text-xs text-green-600 dark:text-green-400 shrink-0">
+              <span className="inline-block w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse" />
+              Activo
+            </span>
+          )}
+        </div>
+
+        {item.client_name && (
+          <p className="text-xs text-gray-400 dark:text-gray-500">{item.client_name}</p>
+        )}
+
         {item.description_short && (
           <p className="text-xs text-gray-500 dark:text-gray-400 line-clamp-2">
             {item.description_short}
           </p>
+        )}
+
+        {/* Technologies */}
+        {item.technologies && item.technologies.length > 0 && (
+          <div className="flex flex-wrap gap-1">
+            {item.technologies.slice(0, 3).map((tech) => (
+              <span
+                key={tech}
+                className="rounded-full bg-blue-50 dark:bg-blue-900/30 px-2 py-0.5 text-xs text-blue-700 dark:text-blue-300 font-medium"
+              >
+                {tech}
+              </span>
+            ))}
+            {item.technologies.length > 3 && (
+              <span className="text-xs text-gray-400">+{item.technologies.length - 3}</span>
+            )}
+          </div>
         )}
 
         {/* Tags */}

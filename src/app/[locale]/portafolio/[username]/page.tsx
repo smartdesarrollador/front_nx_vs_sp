@@ -45,7 +45,7 @@ export default async function PortfolioPage({ params }: Props) {
       />
       <PortfolioNav profileName={profile.display_name} locale={locale} username={username} />
       <main className="flex-1 pt-16">
-        <ProfileHero profile={profile} />
+        <ProfileHero profile={profile} items={items} />
         <PublicPortfolioGrid items={items} locale={locale} username={username} />
       </main>
       <footer className="text-center py-6 text-sm text-gray-400 border-t border-gray-100 dark:border-gray-800">

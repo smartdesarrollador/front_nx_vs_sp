@@ -6,6 +6,17 @@ import { useTranslations } from 'next-intl';
 import { ExternalLink, Github, Star } from 'lucide-react';
 import type { PortfolioItem } from '@/types/digital';
 
+export const CATEGORY_LABELS: Record<string, string> = {
+  web: 'Web', mobile: 'Mobile', design: 'Diseño', branding: 'Branding',
+  data: 'Datos', consulting: 'Consultoría', other: 'Otro',
+};
+
+export const STATUS_CONFIG: Record<string, { label: string; className: string }> = {
+  completed:   { label: 'Completado',  className: 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400' },
+  in_progress: { label: 'En progreso', className: 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400' },
+  archived:    { label: 'Archivado',   className: 'bg-gray-100 text-gray-600 dark:bg-gray-700 dark:text-gray-400' },
+};
+
 const CARD_GRADIENTS = [
   'from-blue-500 to-blue-700',
   'from-purple-500 to-pink-600',
@@ -31,6 +42,7 @@ interface CardProps {
 
 function PortfolioCard({ item, index, locale, username, t }: CardProps) {
   const gradient = CARD_GRADIENTS[index % CARD_GRADIENTS.length];
+  const categoryLabel = item.category ? CATEGORY_LABELS[item.category] : null;
 
   return (
     <Link
@@ -45,6 +57,11 @@ function PortfolioCard({ item, index, locale, username, t }: CardProps) {
             {t('featured')}
           </div>
         )}
+        {categoryLabel && (
+          <div className="absolute top-3 right-3 z-10 px-2 py-1 bg-orange-500 text-white text-xs font-semibold rounded-full">
+            {categoryLabel}
+          </div>
+        )}
         {item.cover_image_url && (
           <Image
             src={item.cover_image_url}
@@ -57,12 +74,43 @@ function PortfolioCard({ item, index, locale, username, t }: CardProps) {
       </div>
       {/* Card body */}
       <div className="p-4">
-        <h3 className="font-bold text-lg text-gray-900 dark:text-white mb-1 line-clamp-1">
-          {item.title}
-        </h3>
+        <div className="flex items-start justify-between gap-2 mb-1">
+          <h3 className="font-bold text-base text-gray-900 dark:text-white line-clamp-1">
+            {item.title}
+          </h3>
+          {item.status === 'in_progress' && (
+            <span className="flex items-center gap-1 text-xs text-green-600 dark:text-green-400 shrink-0 mt-0.5">
+              <span className="inline-block w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse" />
+              Activo
+            </span>
+          )}
+        </div>
+
+        {item.client_name && (
+          <p className="text-xs text-gray-400 dark:text-gray-500 mb-2">{item.client_name}</p>
+        )}
+
         <p className="text-sm text-gray-500 dark:text-gray-400 mb-3 line-clamp-2">
           {item.description_short}
         </p>
+
+        {/* Technologies */}
+        {item.technologies && item.technologies.length > 0 && (
+          <div className="flex flex-wrap gap-1.5 mb-3">
+            {item.technologies.slice(0, 3).map((tech) => (
+              <span
+                key={tech}
+                className="px-2 py-0.5 text-xs bg-blue-50 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 rounded-full font-medium"
+              >
+                {tech}
+              </span>
+            ))}
+            {item.technologies.length > 3 && (
+              <span className="px-2 py-0.5 text-xs text-gray-400">+{item.technologies.length - 3}</span>
+            )}
+          </div>
+        )}
+
         {/* Tags */}
         {item.tags.length > 0 && (
           <div className="flex flex-wrap gap-1.5 mb-3">
@@ -79,6 +127,7 @@ function PortfolioCard({ item, index, locale, username, t }: CardProps) {
             )}
           </div>
         )}
+
         {/* Action links */}
         <div className="flex gap-2" onClick={(e) => e.preventDefault()}>
           {item.demo_url && (
@@ -112,17 +161,50 @@ function PortfolioCard({ item, index, locale, username, t }: CardProps) {
 export function PublicPortfolioGrid({ items, locale, username }: Props) {
   const t = useTranslations('portfolio');
   const [activeTag, setActiveTag] = useState('all');
+  const [activeCategory, setActiveCategory] = useState('all');
 
-  // Extract unique tags
   const allTags = Array.from(new Set(items.flatMap((i) => i.tags)));
+  const allCategories = Array.from(new Set(items.map((i) => i.category).filter(Boolean)));
 
-  const filteredItems =
-    activeTag === 'all' ? items : items.filter((i) => i.tags.includes(activeTag));
+  const filteredItems = items.filter((i) => {
+    const tagOk = activeTag === 'all' || i.tags.includes(activeTag);
+    const catOk = activeCategory === 'all' || i.category === activeCategory;
+    return tagOk && catOk;
+  });
 
   const featuredItems = items.filter((i) => i.is_featured);
 
   return (
     <section className="max-w-6xl mx-auto px-4 pb-16">
+      {/* Category filter */}
+      {allCategories.length >= 2 && (
+        <div className="mb-4 flex gap-2 flex-wrap">
+          <button
+            onClick={() => setActiveCategory('all')}
+            className={`px-4 py-1.5 rounded-full text-sm font-medium transition-colors ${
+              activeCategory === 'all'
+                ? 'bg-gray-900 dark:bg-gray-100 text-white dark:text-gray-900'
+                : 'bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-200 hover:bg-gray-200 dark:hover:bg-gray-700'
+            }`}
+          >
+            Todas
+          </button>
+          {allCategories.map((cat) => (
+            <button
+              key={cat}
+              onClick={() => setActiveCategory(cat)}
+              className={`px-4 py-1.5 rounded-full text-sm font-medium transition-colors ${
+                activeCategory === cat
+                  ? 'bg-orange-500 text-white'
+                  : 'bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-200 hover:bg-gray-200 dark:hover:bg-gray-700'
+              }`}
+            >
+              {CATEGORY_LABELS[cat] ?? cat}
+            </button>
+          ))}
+        </div>
+      )}
+
       {/* Tag filter bar */}
       {allTags.length > 0 && (
         <div className="sticky top-16 z-40 bg-white/90 dark:bg-gray-900/90 backdrop-blur py-3 mb-6 -mx-4 px-4 border-b border-gray-100 dark:border-gray-800">
@@ -160,8 +242,8 @@ export function PublicPortfolioGrid({ items, locale, username }: Props) {
         </div>
       )}
 
-      {/* Featured section (only when showing all) */}
-      {activeTag === 'all' && featuredItems.length > 0 && (
+      {/* Featured section (only when no filters active) */}
+      {activeTag === 'all' && activeCategory === 'all' && featuredItems.length > 0 && (
         <div className="mb-10">
           <h2 className="text-sm font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wider mb-4">
             {t('featured')}

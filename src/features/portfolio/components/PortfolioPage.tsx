@@ -169,6 +169,7 @@ export function PortfolioPage({ locale }: Props) {
                 og_image_url: '',
               }
             }
+            items={items}
           />
           <PublicPortfolioGrid
             items={items}

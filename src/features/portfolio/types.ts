@@ -1,10 +1,10 @@
-import type { PortfolioItem as BasePortfolioItem } from '@/types/digital';
+import type { PortfolioItem as BasePortfolioItem, PortfolioCategory, PortfolioStatus } from '@/types/digital';
 
-export interface PortfolioItem extends BasePortfolioItem {
-  is_published: boolean;
-}
+// PortfolioItem now inherits is_published, category, client_name, technologies,
+// duration, status, accent_color directly from BasePortfolioItem
+export type PortfolioItem = BasePortfolioItem;
 
-export type { BasePortfolioItem };
+export type { BasePortfolioItem, PortfolioCategory, PortfolioStatus };
 export { type PublicProfile } from '@/types/digital';
 
 export interface PortfolioForm {
@@ -20,6 +20,12 @@ export interface PortfolioForm {
   is_featured: boolean;
   is_published: boolean;
   project_date: string;
+  category: string;
+  client_name: string;
+  technologies: string[];
+  duration: string;
+  status: string;
+  accent_color: string;
 }
 
 export type PortfolioPayload = PortfolioForm;
@@ -37,4 +43,10 @@ export const DEFAULT_PORTFOLIO_FORM: PortfolioForm = {
   is_featured: false,
   is_published: true,
   project_date: new Date().toISOString().slice(0, 10),
+  category: '',
+  client_name: '',
+  technologies: [],
+  duration: '',
+  status: 'completed',
+  accent_color: '',
 };

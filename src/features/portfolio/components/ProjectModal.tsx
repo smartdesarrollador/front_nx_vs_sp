@@ -9,6 +9,23 @@ import { DEFAULT_PORTFOLIO_FORM } from '../types';
 import { TagInput } from './TagInput';
 import { SingleImageField, GalleryImagesField } from './ImageUploadField';
 
+const CATEGORY_OPTIONS = [
+  { value: '', label: 'Sin categoría' },
+  { value: 'web', label: 'Web' },
+  { value: 'mobile', label: 'Mobile' },
+  { value: 'design', label: 'Diseño' },
+  { value: 'branding', label: 'Branding' },
+  { value: 'data', label: 'Datos' },
+  { value: 'consulting', label: 'Consultoría' },
+  { value: 'other', label: 'Otro' },
+];
+
+const STATUS_OPTIONS = [
+  { value: 'completed', label: 'Completado' },
+  { value: 'in_progress', label: 'En progreso' },
+  { value: 'archived', label: 'Archivado' },
+];
+
 const schema = z.object({
   title: z.string().min(1, 'Campo requerido'),
   description_short: z.string(),
@@ -22,6 +39,12 @@ const schema = z.object({
   is_featured: z.boolean(),
   is_published: z.boolean(),
   project_date: z.string().min(1, 'Campo requerido'),
+  category: z.string(),
+  client_name: z.string(),
+  technologies: z.array(z.string()),
+  duration: z.string(),
+  status: z.string(),
+  accent_color: z.string(),
 });
 
 type Tab = 'basic' | 'gallery' | 'config';
@@ -67,6 +90,12 @@ export function ProjectModal({
         is_featured: item.is_featured,
         is_published: item.is_published,
         project_date: item.project_date,
+        category: item.category ?? '',
+        client_name: item.client_name ?? '',
+        technologies: item.technologies ?? [],
+        duration: item.duration ?? '',
+        status: item.status ?? 'completed',
+        accent_color: item.accent_color ?? '',
       }
     : DEFAULT_PORTFOLIO_FORM;
 
@@ -84,8 +113,10 @@ export function ProjectModal({
 
   const galleryImages = watch('gallery_images');
   const tags = watch('tags');
+  const technologies = watch('technologies');
   const isFeatured = watch('is_featured');
   const isPublished = watch('is_published');
+  const accentColor = watch('accent_color');
 
   if (!isOpen) return null;
 
@@ -163,6 +194,48 @@ export function ProjectModal({
                   {errors.title && (
                     <p className="mt-1 text-xs text-red-500">{errors.title.message}</p>
                   )}
+                </div>
+
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <label className={labelClass}>Categoría</label>
+                    <select {...register('category')} className={inputClass}>
+                      {CATEGORY_OPTIONS.map((opt) => (
+                        <option key={opt.value} value={opt.value}>
+                          {opt.label}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                  <div>
+                    <label className={labelClass}>Estado</label>
+                    <select {...register('status')} className={inputClass}>
+                      {STATUS_OPTIONS.map((opt) => (
+                        <option key={opt.value} value={opt.value}>
+                          {opt.label}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <label className={labelClass}>Cliente (opcional)</label>
+                    <input
+                      {...register('client_name')}
+                      placeholder="Nombre del cliente"
+                      className={inputClass}
+                    />
+                  </div>
+                  <div>
+                    <label className={labelClass}>Duración</label>
+                    <input
+                      {...register('duration')}
+                      placeholder="2 meses, 6 semanas..."
+                      className={inputClass}
+                    />
+                  </div>
                 </div>
 
                 <div>
@@ -257,6 +330,45 @@ export function ProjectModal({
                   </p>
                 </div>
 
+                <div>
+                  <label className={labelClass}>Stack tecnológico</label>
+                  <TagInput
+                    value={technologies}
+                    onChange={(newTech) => setValue('technologies', newTech)}
+                  />
+                  <p className="mt-1 text-xs text-gray-400">
+                    Ej. React, Django, PostgreSQL...
+                  </p>
+                </div>
+
+                <div>
+                  <label className={labelClass}>Color de acento</label>
+                  <div className="flex items-center gap-3">
+                    <input
+                      type="color"
+                      value={accentColor || '#2563eb'}
+                      onChange={(e) => setValue('accent_color', e.target.value)}
+                      className="w-10 h-10 rounded-lg border border-gray-200 dark:border-gray-600 cursor-pointer p-0.5 bg-white dark:bg-gray-700"
+                    />
+                    <input
+                      className={`${inputClass} font-mono uppercase`}
+                      value={accentColor}
+                      placeholder="#2563eb"
+                      maxLength={7}
+                      onChange={(e) => setValue('accent_color', e.target.value)}
+                    />
+                    {accentColor && (
+                      <button
+                        type="button"
+                        onClick={() => setValue('accent_color', '')}
+                        className="text-xs text-gray-400 hover:text-gray-600 whitespace-nowrap"
+                      >
+                        Limpiar
+                      </button>
+                    )}
+                  </div>
+                </div>
+
                 <div className="flex items-center gap-3 py-2">
                   <input
                     type="checkbox"
@@ -273,7 +385,15 @@ export function ProjectModal({
                   </label>
                 </div>
 
-                <div className="flex items-center gap-3 py-2">
+                <div className="flex items-center justify-between rounded-lg border border-gray-200 dark:border-gray-700 p-3">
+                  <div>
+                    <p className="text-sm font-medium text-gray-900 dark:text-white">
+                      {isPublished ? 'Publicado' : 'Borrador'}
+                    </p>
+                    <p className="text-xs text-gray-500 dark:text-gray-400">
+                      Los borradores no aparecen en tu portafolio público
+                    </p>
+                  </div>
                   <button
                     type="button"
                     role="switch"
@@ -289,9 +409,6 @@ export function ProjectModal({
                       }`}
                     />
                   </button>
-                  <label className="text-sm text-gray-700 dark:text-gray-300">
-                    {isPublished ? 'Publicado' : 'Borrador'}
-                  </label>
                 </div>
               </>
             )}

@@ -75,6 +75,11 @@ export interface PublicLandingResponse {
   landing: LandingTemplate | null;
 }
 
+export type PortfolioCategory =
+  | 'web' | 'mobile' | 'design' | 'branding' | 'data' | 'consulting' | 'other' | '';
+
+export type PortfolioStatus = 'completed' | 'in_progress' | 'archived';
+
 export interface PortfolioItem {
   id: string;
   title: string;
@@ -88,8 +93,15 @@ export interface PortfolioItem {
   case_study_url: string;
   tags: string[];
   is_featured: boolean;
+  is_published: boolean;
   order: number;
   project_date: string;
+  category: PortfolioCategory;
+  client_name: string;
+  technologies: string[];
+  duration: string;
+  status: PortfolioStatus;
+  accent_color: string;
 }
 
 export interface PublicPortfolioResponse {

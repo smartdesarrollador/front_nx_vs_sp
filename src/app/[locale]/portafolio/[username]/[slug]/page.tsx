@@ -51,7 +51,7 @@ export default async function PortfolioItemPage({ params }: Props) {
         showBackLink
       />
       <main className="flex-1 pt-16">
-        <PortfolioDetail item={item} locale={locale} username={username} />
+        <PortfolioDetail item={item} locale={locale} username={username} allItems={data.items} />
       </main>
       <footer className="text-center py-6 text-sm text-gray-400 border-t border-gray-100 dark:border-gray-800">
         {t('poweredBy')}
