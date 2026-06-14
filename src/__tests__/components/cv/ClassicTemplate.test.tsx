@@ -23,9 +23,9 @@ jest.mock('@/components/cv/sections/CVEducationSection', () => ({
   ),
 }));
 jest.mock('@/components/cv/sections/CVSkillsSection', () => ({
-  CVSkillsSection: ({ skills }: { skills: string[] }) => (
+  CVSkillsSection: ({ skills }: { skills: Array<{ name: string } | string> }) => (
     <div data-testid="skills-section">
-      {skills.map((s, i) => <span key={i}>{s}</span>)}
+      {skills.map((s, i) => <span key={i}>{typeof s === 'string' ? s : s.name}</span>)}
     </div>
   ),
 }));
@@ -61,7 +61,11 @@ const mockCV: CVDocument = {
   education: [
     { institution: 'MIT', degree: 'BS', field: 'Computer Science', start_date: '2015', end_date: '2019' },
   ],
-  skills: ['React', 'TypeScript', 'Node.js'],
+  skills: [
+    { name: 'React', level: 'expert' as const, category: 'Frontend' },
+    { name: 'TypeScript', level: 'advanced' as const, category: 'Frontend' },
+    { name: 'Node.js', level: 'intermediate' as const, category: 'Backend' },
+  ],
   languages: [{ name: 'English', level: 'Native' }, { name: 'Spanish', level: 'B2' }],
   certifications: [{ name: 'AWS Certified', issuer: 'Amazon', date: '2023' }],
   template_type: 'classic',

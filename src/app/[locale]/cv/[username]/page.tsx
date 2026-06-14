@@ -42,7 +42,7 @@ export default async function CVPage({ params }: Props) {
   const t = await getTranslations('cv');
   const data = await getPublicCV(username);
 
-  if (!data || !data.cv) notFound();
+  if (!data || !data.cv || data.cv.is_published === false) notFound();
 
   const { profile, cv } = data;
   const Template = TEMPLATE_MAP[cv.template_type] ?? ClassicTemplate;
@@ -55,6 +55,9 @@ export default async function CVPage({ params }: Props) {
     skills: t('skills'),
     languages: t('languages'),
     certifications: t('certifications'),
+    projects: 'Proyectos',
+    volunteer: 'Voluntariado',
+    awards: 'Premios y Reconocimientos',
     present: t('present'),
     contact: t('contact'),
   };

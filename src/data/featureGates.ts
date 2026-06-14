@@ -20,6 +20,10 @@ export type FeatureKey =
   | 'cvTemplates'
   | 'cvPDFExport'
   | 'cvMultipleVersions'
+  | 'cvProjects'
+  | 'cvVolunteer'
+  | 'cvAwards'
+  | 'cvAccentColor'
   | 'customDomain'
   | 'whiteLabel'
   | 'prioritySupport';
@@ -34,6 +38,9 @@ export type UpgradableFeatureKey =
   | 'portfolio'
   | 'cvPDFExport'
   | 'cvMultipleVersions'
+  | 'cvProjects'
+  | 'cvVolunteer'
+  | 'cvAwards'
   | 'customDomain'
   | 'whiteLabel';
 
@@ -58,6 +65,10 @@ export const FEATURES_BY_PLAN: Record<Plan, Record<FeatureKey, boolean | number>
     cvTemplates: 1,
     cvPDFExport: false,
     cvMultipleVersions: false,
+    cvProjects: false,
+    cvVolunteer: false,
+    cvAwards: false,
+    cvAccentColor: false,
     customDomain: false,
     whiteLabel: false,
     prioritySupport: false,
@@ -82,6 +93,10 @@ export const FEATURES_BY_PLAN: Record<Plan, Record<FeatureKey, boolean | number>
     cvTemplates: 2,
     cvPDFExport: true,
     cvMultipleVersions: false,
+    cvProjects: true,
+    cvVolunteer: false,
+    cvAwards: false,
+    cvAccentColor: false,
     customDomain: false,
     whiteLabel: false,
     prioritySupport: false,
@@ -106,6 +121,10 @@ export const FEATURES_BY_PLAN: Record<Plan, Record<FeatureKey, boolean | number>
     cvTemplates: 3,
     cvPDFExport: true,
     cvMultipleVersions: true,
+    cvProjects: true,
+    cvVolunteer: true,
+    cvAwards: true,
+    cvAccentColor: true,
     customDomain: true,
     whiteLabel: false,
     prioritySupport: false,
@@ -130,6 +149,10 @@ export const FEATURES_BY_PLAN: Record<Plan, Record<FeatureKey, boolean | number>
     cvTemplates: 3,
     cvPDFExport: true,
     cvMultipleVersions: true,
+    cvProjects: true,
+    cvVolunteer: true,
+    cvAwards: true,
+    cvAccentColor: true,
     customDomain: true,
     whiteLabel: true,
     prioritySupport: true,
@@ -186,6 +209,21 @@ export const UPGRADE_MESSAGES: Record<
   cvMultipleVersions: {
     title: 'Múltiples Versiones',
     message: 'Crea diferentes versiones de tu CV para distintos tipos de trabajo.',
+    requiredPlan: 'professional',
+  },
+  cvProjects: {
+    title: 'Proyectos Personales',
+    message: 'Muestra tus proyectos personales directamente en tu CV.',
+    requiredPlan: 'starter',
+  },
+  cvVolunteer: {
+    title: 'Voluntariado',
+    message: 'Agrega tu experiencia de voluntariado al CV.',
+    requiredPlan: 'professional',
+  },
+  cvAwards: {
+    title: 'Premios y Reconocimientos',
+    message: 'Destaca tus premios y reconocimientos profesionales.',
     requiredPlan: 'professional',
   },
   customDomain: {

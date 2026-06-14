@@ -115,6 +115,8 @@ export interface CVExperience {
   start_date: string;
   end_date: string | null;
   description: string;
+  achievements?: string[];
+  employment_type?: 'full_time' | 'part_time' | 'freelance' | 'internship' | 'contract' | '';
 }
 
 export interface CVEducation {
@@ -125,16 +127,64 @@ export interface CVEducation {
   end_date: string | null;
 }
 
+export interface CVSkill {
+  name: string;
+  level: 'beginner' | 'intermediate' | 'advanced' | 'expert';
+  category: string;
+}
+
+export interface CVCertification {
+  name: string;
+  issuer: string;
+  date: string;
+  url?: string;
+  credential_id?: string;
+  expiry_date?: string;
+}
+
+export interface CVProject {
+  name: string;
+  description: string;
+  url: string;
+  year: string;
+  technologies: string[];
+}
+
+export interface CVVolunteer {
+  org: string;
+  role: string;
+  start_date: string;
+  end_date: string | null;
+  description: string;
+}
+
+export interface CVAward {
+  title: string;
+  issuer: string;
+  date: string;
+  description: string;
+}
+
 export interface CVDocument {
   professional_summary: string;
   experience: CVExperience[];
   education: CVEducation[];
-  skills: string[];
+  skills: CVSkill[];
   languages: { name: string; level: string }[];
-  certifications: { name: string; issuer: string; date: string }[];
+  certifications: CVCertification[];
   template_type: string;
   show_photo: boolean;
   show_contact: boolean;
+  headline?: string;
+  location?: string;
+  website_url?: string;
+  linkedin_url?: string;
+  github_url?: string;
+  accent_color?: string;
+  is_published?: boolean;
+  projects?: CVProject[];
+  volunteer?: CVVolunteer[];
+  awards?: CVAward[];
 }
 
 export interface PublicCVResponse {

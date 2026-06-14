@@ -1,7 +1,7 @@
 'use client';
 import { useState } from 'react';
 import { Pencil, Trash2, Plus, Check, X } from 'lucide-react';
-import type { CVFormCertification } from '../types';
+import type { CVFormVolunteer } from '../types';
 
 const inputClass =
   'w-full rounded-lg border border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-700 px-3 py-2 text-sm text-gray-900 dark:text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500';
@@ -13,26 +13,26 @@ function uuid(): string {
     : String(Date.now() + Math.random());
 }
 
-function emptyItem(): CVFormCertification {
-  return { _id: uuid(), name: '', issuer: '', date: '', url: '', credential_id: '', expiry_date: '' };
+function emptyItem(): CVFormVolunteer {
+  return { _id: uuid(), org: '', role: '', start_date: '', end_date: null, description: '', is_current: false };
 }
 
 interface Props {
-  value: CVFormCertification[];
-  onChange: (items: CVFormCertification[]) => void;
+  value: CVFormVolunteer[];
+  onChange: (items: CVFormVolunteer[]) => void;
 }
 
-export function CertificationsEditor({ value, onChange }: Props) {
+export function VolunteerEditor({ value, onChange }: Props) {
   const [editingId, setEditingId] = useState<string | 'new' | null>(null);
-  const [draft, setDraft] = useState<CVFormCertification>(emptyItem());
+  const [draft, setDraft] = useState<CVFormVolunteer>(emptyItem());
 
   function startNew() {
     setDraft(emptyItem());
     setEditingId('new');
   }
 
-  function startEdit(item: CVFormCertification) {
-    setDraft({ ...item, credential_id: item.credential_id ?? '', expiry_date: item.expiry_date ?? '', url: item.url ?? '' });
+  function startEdit(item: CVFormVolunteer) {
+    setDraft({ ...item });
     setEditingId(item._id);
   }
 
@@ -41,7 +41,7 @@ export function CertificationsEditor({ value, onChange }: Props) {
   }
 
   function save() {
-    if (!draft.name.trim()) return;
+    if (!draft.org.trim() || !draft.role.trim()) return;
     if (editingId === 'new') {
       onChange([...value, draft]);
     } else {
@@ -54,7 +54,7 @@ export function CertificationsEditor({ value, onChange }: Props) {
     onChange(value.filter((i) => i._id !== id));
   }
 
-  function updateDraft(partial: Partial<CVFormCertification>) {
+  function updateDraft(partial: Partial<CVFormVolunteer>) {
     setDraft((d) => ({ ...d, ...partial }));
   }
 
@@ -76,13 +76,12 @@ export function CertificationsEditor({ value, onChange }: Props) {
         ) : (
           <div key={item._id} className="flex items-start justify-between rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 p-3">
             <div>
-              <p className="text-sm font-medium text-gray-900 dark:text-white">{item.name}</p>
+              <p className="text-sm font-medium text-gray-900 dark:text-white">{item.role}</p>
               <p className="text-xs text-gray-500 dark:text-gray-400">
-                {item.issuer}{item.date ? ` · ${item.date}` : ''}
-                {item.expiry_date ? ` · vence ${item.expiry_date}` : ''}
+                {item.org} · {item.start_date} – {item.is_current ? 'Presente' : (item.end_date ?? '')}
               </p>
-              {item.credential_id && (
-                <p className="text-xs text-gray-400 dark:text-gray-500">ID: {item.credential_id}</p>
+              {item.description && (
+                <p className="text-xs text-gray-400 dark:text-gray-500 mt-1 line-clamp-2">{item.description}</p>
               )}
             </div>
             <div className="flex gap-1 ml-2 shrink-0">
@@ -113,39 +112,46 @@ export function CertificationsEditor({ value, onChange }: Props) {
 
       {editingId === null && (
         <button type="button" onClick={startNew} className="flex items-center gap-1.5 text-sm text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 font-medium transition-colors">
-          <Plus size={14} /> Agregar certificación
+          <Plus size={14} /> Agregar voluntariado
         </button>
       )}
     </div>
   );
 }
 
-function InlineForm({ draft, onChange }: { draft: CVFormCertification; onChange: (p: Partial<CVFormCertification>) => void }) {
+function InlineForm({ draft, onChange }: { draft: CVFormVolunteer; onChange: (p: Partial<CVFormVolunteer>) => void }) {
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-      <div className="sm:col-span-2">
-        <label className={labelClass}>Nombre *</label>
-        <input className={inputClass} value={draft.name} placeholder="AWS Certified Developer…" onChange={(e) => onChange({ name: e.target.value })} />
+      <div>
+        <label className={labelClass}>Organización *</label>
+        <input className={inputClass} value={draft.org} placeholder="Cruz Roja, ONG…" onChange={(e) => onChange({ org: e.target.value })} />
       </div>
       <div>
-        <label className={labelClass}>Emisor</label>
-        <input className={inputClass} value={draft.issuer} placeholder="Amazon, Google…" onChange={(e) => onChange({ issuer: e.target.value })} />
+        <label className={labelClass}>Rol *</label>
+        <input className={inputClass} value={draft.role} placeholder="Coordinador, Mentor…" onChange={(e) => onChange({ role: e.target.value })} />
       </div>
       <div>
-        <label className={labelClass}>Fecha obtenida (AAAA-MM)</label>
-        <input className={inputClass} value={draft.date} placeholder="2023-05" onChange={(e) => onChange({ date: e.target.value })} />
+        <label className={labelClass}>Inicio (AAAA-MM)</label>
+        <input className={inputClass} value={draft.start_date} placeholder="2022-03" onChange={(e) => onChange({ start_date: e.target.value })} />
       </div>
       <div>
-        <label className={labelClass}>ID de credencial (opcional)</label>
-        <input className={inputClass} value={draft.credential_id ?? ''} placeholder="ABC123XYZ" onChange={(e) => onChange({ credential_id: e.target.value })} />
-      </div>
-      <div>
-        <label className={labelClass}>Vence (AAAA-MM, opcional)</label>
-        <input className={inputClass} value={draft.expiry_date ?? ''} placeholder="2026-05" onChange={(e) => onChange({ expiry_date: e.target.value })} />
+        <label className={labelClass}>Fin (AAAA-MM)</label>
+        <input className={inputClass} value={draft.end_date ?? ''} placeholder="2023-12" disabled={draft.is_current} onChange={(e) => onChange({ end_date: e.target.value || null })} />
       </div>
       <div className="sm:col-span-2">
-        <label className={labelClass}>URL de verificación (opcional)</label>
-        <input className={inputClass} type="url" value={draft.url ?? ''} placeholder="https://verify.example.com/…" onChange={(e) => onChange({ url: e.target.value })} />
+        <label className="flex items-center gap-2 cursor-pointer">
+          <input
+            type="checkbox"
+            checked={draft.is_current}
+            onChange={(e) => onChange({ is_current: e.target.checked, end_date: e.target.checked ? null : draft.end_date })}
+            className="w-4 h-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+          />
+          <span className="text-xs text-gray-700 dark:text-gray-300">Actualmente activo</span>
+        </label>
+      </div>
+      <div className="sm:col-span-2">
+        <label className={labelClass}>Descripción</label>
+        <textarea className={inputClass} rows={2} value={draft.description} placeholder="Describe tu actividad y contribución…" onChange={(e) => onChange({ description: e.target.value })} />
       </div>
     </div>
   );
