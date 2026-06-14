@@ -23,9 +23,10 @@ interface Props {
   locale: string;
   ctaText?: string;
   ctaUrl?: string;
+  navBgColor?: string;
 }
 
-export function PublicLandingNav({ sections, profileName, locale, ctaText, ctaUrl }: Props) {
+export function PublicLandingNav({ sections, profileName, locale, ctaText, ctaUrl, navBgColor }: Props) {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [activeSection, setActiveSection] = useState<string>('');
 
@@ -51,7 +52,12 @@ export function PublicLandingNav({ sections, profileName, locale, ctaText, ctaUr
   }, []);
 
   return (
-    <nav className="fixed top-0 w-full z-50 bg-white/80 dark:bg-gray-900/80 backdrop-blur-md border-b border-gray-100 dark:border-gray-800 shadow-sm">
+    <nav
+      className={`fixed top-0 w-full z-50 backdrop-blur-md border-b border-gray-100 dark:border-gray-800 shadow-sm ${
+        navBgColor ? '' : 'bg-white/80 dark:bg-gray-900/80'
+      }`}
+      style={navBgColor ? { background: navBgColor } : undefined}
+    >
       <div className="max-w-6xl mx-auto px-4 h-16 flex items-center justify-between">
         <Link
           href={`/${locale}`}

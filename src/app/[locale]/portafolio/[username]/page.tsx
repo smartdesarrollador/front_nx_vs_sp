@@ -34,7 +34,7 @@ export default async function PortfolioPage({ params }: Props) {
 
   if (!data) notFound();
 
-  const { profile, items } = data;
+  const { profile, items, theme_colors } = data;
   const jsonLd = buildItemListJsonLd(profile, items, locale);
 
   return (
@@ -43,10 +43,15 @@ export default async function PortfolioPage({ params }: Props) {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
-      <PortfolioNav profileName={profile.display_name} locale={locale} username={username} />
+      <PortfolioNav
+        profileName={profile.display_name}
+        locale={locale}
+        username={username}
+        navBgColor={theme_colors?.nav_bg}
+      />
       <main className="flex-1 pt-16">
-        <ProfileHero profile={profile} items={items} />
-        <PublicPortfolioGrid items={items} locale={locale} username={username} />
+        <ProfileHero profile={profile} items={items} themeColors={theme_colors} />
+        <PublicPortfolioGrid items={items} locale={locale} username={username} themeColors={theme_colors} />
       </main>
       <footer className="text-center py-6 text-sm text-gray-400 border-t border-gray-100 dark:border-gray-800">
         {t('poweredBy')}

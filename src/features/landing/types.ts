@@ -1,5 +1,6 @@
-import type { LandingSection, LandingSectionType, LandingSocialLinks, LandingTemplateType } from '@/types/digital';
+import type { LandingSection, LandingSectionType, LandingSocialLinks, LandingTemplateType, LandingThemeColors } from '@/types/digital';
 import type { Plan } from '@/data/featureGates';
+export type { LandingThemeColors };
 
 // Tipos de contenido por sección
 export interface HeroContent {
@@ -87,6 +88,7 @@ export interface LandingFormState {
   is_public: boolean;
   social_links: LandingSocialLinks;
   accent_color: string;
+  theme_colors: LandingThemeColors;
 }
 
 // Respuesta GET /app/digital/landing/
@@ -220,6 +222,13 @@ export const TEMPLATE_META: Record<
   },
 };
 
+export const TEMPLATE_PALETTES: Record<LandingTemplateType, LandingThemeColors & { accent: string }> = {
+  basic:     { hero_bg: '#1d4ed8', hero_text: '#ffffff', button_bg: '#3b82f6', nav_bg: '#1e3a8a', accent: '#3b82f6' },
+  corporate: { hero_bg: '#111827', hero_text: '#f9fafb', button_bg: '#4b5563', nav_bg: '#030712', accent: '#6b7280' },
+  creative:  { hero_bg: '#7c3aed', hero_text: '#ffffff', button_bg: '#a855f7', nav_bg: '#4c1d95', accent: '#ec4899' },
+  minimal:   { hero_bg: '#ffffff', hero_text: '#111827', button_bg: '#2563eb', nav_bg: '#f8fafc', accent: '#2563eb' },
+};
+
 export const DEFAULT_FORM_STATE: LandingFormState = {
   template_type: 'basic',
   sections: [
@@ -234,4 +243,5 @@ export const DEFAULT_FORM_STATE: LandingFormState = {
   is_public: false,
   social_links: {},
   accent_color: '',
+  theme_colors: {},
 };

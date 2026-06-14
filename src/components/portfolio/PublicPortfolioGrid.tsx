@@ -4,7 +4,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { useTranslations } from 'next-intl';
 import { ExternalLink, Github, Star } from 'lucide-react';
-import type { PortfolioItem } from '@/types/digital';
+import type { PortfolioItem, PortfolioThemeColors } from '@/types/digital';
 
 export const CATEGORY_LABELS: Record<string, string> = {
   web: 'Web', mobile: 'Mobile', design: 'Diseño', branding: 'Branding',
@@ -30,6 +30,7 @@ interface Props {
   items: PortfolioItem[];
   locale: string;
   username: string;
+  themeColors?: PortfolioThemeColors;
 }
 
 interface CardProps {
@@ -158,10 +159,11 @@ function PortfolioCard({ item, index, locale, username, t }: CardProps) {
   );
 }
 
-export function PublicPortfolioGrid({ items, locale, username }: Props) {
+export function PublicPortfolioGrid({ items, locale, username, themeColors }: Props) {
   const t = useTranslations('portfolio');
   const [activeTag, setActiveTag] = useState('all');
   const [activeCategory, setActiveCategory] = useState('all');
+  const accentColor = themeColors?.accent;
 
   const allTags = Array.from(new Set(items.flatMap((i) => i.tags)));
   const allCategories = Array.from(new Set(items.map((i) => i.category).filter(Boolean)));
@@ -195,9 +197,14 @@ export function PublicPortfolioGrid({ items, locale, username }: Props) {
               onClick={() => setActiveCategory(cat)}
               className={`px-4 py-1.5 rounded-full text-sm font-medium transition-colors ${
                 activeCategory === cat
-                  ? 'bg-orange-500 text-white'
+                  ? accentColor ? 'text-white' : 'bg-orange-500 text-white'
                   : 'bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-200 hover:bg-gray-200 dark:hover:bg-gray-700'
               }`}
+              style={
+                activeCategory === cat && accentColor
+                  ? { background: accentColor }
+                  : undefined
+              }
             >
               {CATEGORY_LABELS[cat] ?? cat}
             </button>
@@ -213,9 +220,10 @@ export function PublicPortfolioGrid({ items, locale, username }: Props) {
               onClick={() => setActiveTag('all')}
               className={`flex-shrink-0 px-4 py-1.5 rounded-full text-sm font-medium transition-colors ${
                 activeTag === 'all'
-                  ? 'bg-primary-600 text-white'
+                  ? accentColor ? 'text-white' : 'bg-primary-600 text-white'
                   : 'bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-200 hover:bg-gray-200 dark:hover:bg-gray-700'
               }`}
+              style={activeTag === 'all' && accentColor ? { background: accentColor } : undefined}
             >
               {t('filterAll')}
             </button>
@@ -225,9 +233,10 @@ export function PublicPortfolioGrid({ items, locale, username }: Props) {
                 onClick={() => setActiveTag(tag)}
                 className={`flex-shrink-0 px-4 py-1.5 rounded-full text-sm font-medium transition-colors ${
                   activeTag === tag
-                    ? 'bg-primary-600 text-white'
+                    ? accentColor ? 'text-white' : 'bg-primary-600 text-white'
                     : 'bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-200 hover:bg-gray-200 dark:hover:bg-gray-700'
                 }`}
+                style={activeTag === tag && accentColor ? { background: accentColor } : undefined}
               >
                 {tag}
               </button>

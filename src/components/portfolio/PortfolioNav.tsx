@@ -8,11 +8,15 @@ interface Props {
   locale: string;
   username: string;
   showBackLink?: boolean;
+  navBgColor?: string;
 }
 
-export function PortfolioNav({ profileName, locale, username, showBackLink = false }: Props) {
+export function PortfolioNav({ profileName, locale, username, showBackLink = false, navBgColor }: Props) {
   return (
-    <nav className="fixed top-0 w-full z-50 bg-white/80 dark:bg-gray-900/80 backdrop-blur border-b border-gray-200/60 dark:border-gray-700/60">
+    <nav
+      className={`fixed top-0 w-full z-50 backdrop-blur border-b border-gray-200/60 dark:border-gray-700/60 ${navBgColor ? '' : 'bg-white/80 dark:bg-gray-900/80'}`}
+      style={navBgColor ? { background: navBgColor } : undefined}
+    >
       <div className="max-w-6xl mx-auto px-4 h-16 flex items-center justify-between">
         <div className="flex items-center gap-3">
           {showBackLink && (

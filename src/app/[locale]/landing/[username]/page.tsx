@@ -68,6 +68,7 @@ export default async function LandingPage({ params }: Props) {
         locale={locale}
         ctaText={ctaText}
         ctaUrl={ctaUrl}
+        navBgColor={landing.theme_colors?.nav_bg}
       />
       <main className="flex-1 pt-16">
         <PublicLandingView profile={profile} landing={landing} />

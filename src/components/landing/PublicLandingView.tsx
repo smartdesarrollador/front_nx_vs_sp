@@ -40,6 +40,7 @@ interface Props {
 export function PublicLandingView({ profile, landing }: Props) {
   const socialLinks = (landing.social_links ?? {}) as LandingSocialLinks;
   const accentColor = landing.accent_color || undefined;
+  const themeColors = landing.theme_colors;
 
   return (
     <div>
@@ -53,6 +54,7 @@ export function PublicLandingView({ profile, landing }: Props) {
               profile={profile}
               socialLinks={socialLinks}
               accentColor={accentColor}
+              themeColors={themeColors}
             />
           );
         }

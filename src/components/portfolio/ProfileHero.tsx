@@ -1,12 +1,13 @@
 import Image from 'next/image';
-import type { PublicProfile, PortfolioItem } from '@/types/digital';
+import type { PublicProfile, PortfolioItem, PortfolioThemeColors } from '@/types/digital';
 
 interface Props {
   profile: PublicProfile;
   items?: PortfolioItem[];
+  themeColors?: PortfolioThemeColors;
 }
 
-export function ProfileHero({ profile, items }: Props) {
+export function ProfileHero({ profile, items, themeColors }: Props) {
   const initials = profile.display_name
     .split(' ')
     .map((w) => w[0])
@@ -24,8 +25,12 @@ export function ProfileHero({ profile, items }: Props) {
 
   const showStats = items && items.length > 0;
 
+  const headerBgStyle = themeColors?.header_bg ? { background: themeColors.header_bg } : undefined;
+  const textStyle = themeColors?.header_text ? { color: themeColors.header_text } : undefined;
+
   return (
-    <section className="max-w-4xl mx-auto px-4 py-12 text-center">
+    <section className="w-full" style={headerBgStyle}>
+      <div className="max-w-4xl mx-auto px-4 py-12 text-center">
       <div className="flex justify-center mb-6">
         {profile.avatar_url ? (
           <div className="relative w-24 h-24 rounded-full overflow-hidden ring-4 ring-gray-100 dark:ring-gray-800">
@@ -43,14 +48,25 @@ export function ProfileHero({ profile, items }: Props) {
           </div>
         )}
       </div>
-      <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">
+      <h1
+        className={`text-3xl font-bold mb-2 ${textStyle ? '' : 'text-gray-900 dark:text-white'}`}
+        style={textStyle}
+      >
         {profile.display_name}
       </h1>
       {profile.title && (
-        <p className="text-lg text-gray-500 dark:text-gray-400 mb-4">{profile.title}</p>
+        <p
+          className={`text-lg mb-4 ${textStyle ? 'opacity-80' : 'text-gray-500 dark:text-gray-400'}`}
+          style={textStyle}
+        >
+          {profile.title}
+        </p>
       )}
       {profile.bio && (
-        <p className="text-gray-600 dark:text-gray-300 max-w-2xl mx-auto leading-relaxed mb-6">
+        <p
+          className={`max-w-2xl mx-auto leading-relaxed mb-6 ${textStyle ? 'opacity-75' : 'text-gray-600 dark:text-gray-300'}`}
+          style={textStyle}
+        >
           {profile.bio}
         </p>
       )}
@@ -58,27 +74,45 @@ export function ProfileHero({ profile, items }: Props) {
       {showStats && (
         <div className="flex items-center justify-center gap-8 mt-2">
           <div className="text-center">
-            <p className="text-2xl font-bold text-gray-900 dark:text-white">{totalItems}</p>
-            <p className="text-xs text-gray-500 dark:text-gray-400 mt-0.5">
+            <p
+              className={`text-2xl font-bold ${textStyle ? '' : 'text-gray-900 dark:text-white'}`}
+              style={textStyle}
+            >
+              {totalItems}
+            </p>
+            <p className={`text-xs mt-0.5 ${textStyle ? 'opacity-60' : 'text-gray-500 dark:text-gray-400'}`} style={textStyle}>
               {totalItems === 1 ? 'Proyecto' : 'Proyectos'}
             </p>
           </div>
           {uniqueCategories > 0 && (
             <div className="text-center">
-              <p className="text-2xl font-bold text-gray-900 dark:text-white">{uniqueCategories}</p>
-              <p className="text-xs text-gray-500 dark:text-gray-400 mt-0.5">
+              <p
+                className={`text-2xl font-bold ${textStyle ? '' : 'text-gray-900 dark:text-white'}`}
+                style={textStyle}
+              >
+                {uniqueCategories}
+              </p>
+              <p className={`text-xs mt-0.5 ${textStyle ? 'opacity-60' : 'text-gray-500 dark:text-gray-400'}`} style={textStyle}>
                 {uniqueCategories === 1 ? 'Categoría' : 'Categorías'}
               </p>
             </div>
           )}
           {uniqueTechs > 0 && (
             <div className="text-center">
-              <p className="text-2xl font-bold text-gray-900 dark:text-white">{uniqueTechs}</p>
-              <p className="text-xs text-gray-500 dark:text-gray-400 mt-0.5">Tecnologías</p>
+              <p
+                className={`text-2xl font-bold ${textStyle ? '' : 'text-gray-900 dark:text-white'}`}
+                style={textStyle}
+              >
+                {uniqueTechs}
+              </p>
+              <p className={`text-xs mt-0.5 ${textStyle ? 'opacity-60' : 'text-gray-500 dark:text-gray-400'}`} style={textStyle}>
+                Tecnologías
+              </p>
             </div>
           )}
         </div>
       )}
+      </div>
     </section>
   );
 }

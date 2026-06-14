@@ -59,6 +59,13 @@ export interface LandingSocialLinks {
   tiktok?: string;
 }
 
+export interface LandingThemeColors {
+  hero_bg?: string;
+  hero_text?: string;
+  button_bg?: string;
+  nav_bg?: string;
+}
+
 export interface LandingTemplate {
   template_type: LandingTemplateType;
   sections: LandingSection[];
@@ -68,6 +75,7 @@ export interface LandingTemplate {
   ga_tracking_id: string;
   social_links?: LandingSocialLinks;
   accent_color?: string;
+  theme_colors?: LandingThemeColors;
 }
 
 export interface PublicLandingResponse {
@@ -104,9 +112,17 @@ export interface PortfolioItem {
   accent_color: string;
 }
 
+export interface PortfolioThemeColors {
+  header_bg?: string;
+  header_text?: string;
+  accent?: string;
+  nav_bg?: string;
+}
+
 export interface PublicPortfolioResponse {
   profile: PublicProfile;
   items: PortfolioItem[];
+  theme_colors?: PortfolioThemeColors;
 }
 
 export interface CVExperience {

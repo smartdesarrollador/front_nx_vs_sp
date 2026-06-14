@@ -1,6 +1,6 @@
 import Image from 'next/image';
 import { ChevronDown, Linkedin, Github, Twitter, Instagram, Globe, Music2 } from 'lucide-react';
-import type { PublicProfile, LandingSocialLinks, LandingTemplate } from '@/types/digital';
+import type { PublicProfile, LandingSocialLinks, LandingTemplate, LandingThemeColors } from '@/types/digital';
 import type { SectionProps } from '../PublicLandingView';
 
 interface HeroContent {
@@ -38,9 +38,10 @@ export interface HeroSectionProps extends SectionProps {
   profile?: PublicProfile;
   socialLinks?: LandingSocialLinks;
   accentColor?: string;
+  themeColors?: LandingThemeColors;
 }
 
-export function HeroSection({ content, templateType, profile, socialLinks }: HeroSectionProps) {
+export function HeroSection({ content, templateType, profile, socialLinks, themeColors }: HeroSectionProps) {
   const {
     title,
     subtitle,
@@ -52,6 +53,11 @@ export function HeroSection({ content, templateType, profile, socialLinks }: Her
 
   const bgClass = getHeroBg(templateType);
   const isLight = templateType === 'minimal';
+  const heroBgStyle = themeColors?.hero_bg ? { background: themeColors.hero_bg } : undefined;
+  const heroTextStyle = themeColors?.hero_text ? { color: themeColors.hero_text } : undefined;
+  const ctaBgStyle = themeColors?.button_bg
+    ? { background: themeColors.button_bg, color: '#ffffff', border: 'none' }
+    : undefined;
   const alignClass = alignment === 'left' ? 'text-left' : alignment === 'right' ? 'text-right' : 'text-center';
   const itemsClass = alignment === 'left' ? 'items-start' : alignment === 'right' ? 'items-end' : 'items-center';
 
@@ -65,7 +71,11 @@ export function HeroSection({ content, templateType, profile, socialLinks }: Her
     : '??';
 
   return (
-    <section id="hero" className={`relative overflow-hidden py-32 px-4 ${bgClass}`}>
+    <section
+      id="hero"
+      className={`relative overflow-hidden py-32 px-4 ${heroBgStyle ? '' : bgClass}`}
+      style={heroBgStyle}
+    >
       {/* Blobs decorativos */}
       <div className="absolute -top-32 -right-32 w-96 h-96 rounded-full bg-white/5 pointer-events-none" />
       <div className="absolute -bottom-24 -left-24 w-80 h-80 rounded-full bg-white/5 pointer-events-none" />
@@ -98,14 +108,17 @@ export function HeroSection({ content, templateType, profile, socialLinks }: Her
 
         {/* Título */}
         {title && (
-          <h1 className="text-4xl md:text-6xl font-bold leading-tight">
+          <h1 className="text-4xl md:text-6xl font-bold leading-tight" style={heroTextStyle}>
             {title}
           </h1>
         )}
 
         {/* Subtítulo */}
         {subtitle && (
-          <p className={`text-lg md:text-xl max-w-2xl leading-relaxed ${isLight ? 'text-gray-600' : 'opacity-85'}`}>
+          <p
+            className={`text-lg md:text-xl max-w-2xl leading-relaxed ${heroTextStyle ? '' : isLight ? 'text-gray-600' : 'opacity-85'}`}
+            style={heroTextStyle}
+          >
             {subtitle}
           </p>
         )}
@@ -114,7 +127,8 @@ export function HeroSection({ content, templateType, profile, socialLinks }: Her
         {ctaText && (
           <a
             href={ctaUrl || '#contact'}
-            className={`inline-flex items-center px-8 py-4 rounded-full font-semibold text-lg transition-all duration-200 shadow-lg hover:shadow-xl hover:-translate-y-0.5 ${isLight ? 'bg-primary-600 text-white hover:bg-primary-700' : 'bg-white text-primary-700 hover:bg-gray-50'}`}
+            className={`inline-flex items-center px-8 py-4 rounded-full font-semibold text-lg transition-all duration-200 shadow-lg hover:shadow-xl hover:-translate-y-0.5 ${ctaBgStyle ? '' : isLight ? 'bg-primary-600 text-white hover:bg-primary-700' : 'bg-white text-primary-700 hover:bg-gray-50'}`}
+            style={ctaBgStyle}
           >
             {ctaText}
           </a>

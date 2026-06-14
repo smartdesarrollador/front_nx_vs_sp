@@ -1,6 +1,6 @@
 'use client';
-import { useState, useMemo } from 'react';
-import { Briefcase, ExternalLink } from 'lucide-react';
+import { useState, useMemo, useEffect } from 'react';
+import { AlertCircle, Briefcase, CheckCircle, ExternalLink, Save } from 'lucide-react';
 import { useFeatureGate } from '@/hooks/useFeatureGate';
 import { useAuthStore } from '@/store/authStore';
 import { UpgradePrompt } from '@/components/shared/UpgradePrompt';
@@ -12,11 +12,13 @@ import { usePortfolioItems } from '../hooks/usePortfolioItems';
 import { useCreateItem } from '../hooks/useCreateItem';
 import { useUpdateItem } from '../hooks/useUpdateItem';
 import { useDeleteItem } from '../hooks/useDeleteItem';
+import { usePortfolioSettings, useSavePortfolioSettings } from '../hooks/usePortfolioSettings';
 import { ProjectCard } from './ProjectCard';
 import { ProjectModal } from './ProjectModal';
-import type { PortfolioItem, PortfolioForm } from '../types';
+import { PortfolioTemplateSelector } from './PortfolioTemplateSelector';
+import type { PortfolioItem, PortfolioForm, PortfolioThemeColors } from '../types';
 
-type Tab = 'projects' | 'preview';
+type Tab = 'projects' | 'appearance' | 'preview';
 
 interface Props {
   locale: string;
@@ -32,10 +34,37 @@ export function PortfolioPage({ locale }: Props) {
   const { mutate: updateItem, isPending: isUpdating, error: updateError } = useUpdateItem();
   const { mutate: deleteItem } = useDeleteItem();
 
+  const { data: settingsData } = usePortfolioSettings();
+  const { mutate: saveSettings, isPending: isSavingSettings } = useSavePortfolioSettings();
+  const [themeColors, setThemeColors] = useState<PortfolioThemeColors>({});
+  const [saveState, setSaveState] = useState<'idle' | 'success' | 'error'>('idle');
+
   const [modalOpen, setModalOpen] = useState(false);
   const [editingItem, setEditingItem] = useState<PortfolioItem | undefined>(undefined);
   const [activeTag, setActiveTag] = useState<string>('all');
   const [activeTab, setActiveTab] = useState<Tab>('projects');
+
+  useEffect(() => {
+    if (settingsData?.theme_colors && Object.keys(settingsData.theme_colors).length > 0) {
+      setThemeColors(settingsData.theme_colors);
+    }
+  }, [settingsData]);
+
+  const handleSaveAppearance = () => {
+    saveSettings(
+      { theme_colors: themeColors },
+      {
+        onSuccess: () => {
+          setSaveState('success');
+          setTimeout(() => setSaveState('idle'), 5000);
+        },
+        onError: () => {
+          setSaveState('error');
+          setTimeout(() => setSaveState('idle'), 6000);
+        },
+      },
+    );
+  };
 
   const items = useMemo(() => data?.items ?? [], [data]);
   const profile = data?.profile;
@@ -106,6 +135,7 @@ export function PortfolioPage({ locale }: Props) {
 
   const TABS: { id: Tab; label: string }[] = [
     { id: 'projects', label: 'Proyectos' },
+    { id: 'appearance', label: 'Apariencia' },
     { id: 'preview', label: 'Preview' },
   ];
 
@@ -152,6 +182,64 @@ export function PortfolioPage({ locale }: Props) {
         ))}
       </div>
 
+      {/* Tab: Apariencia */}
+      {activeTab === 'appearance' && (
+        <div className="space-y-4">
+          <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-6">
+            <PortfolioTemplateSelector
+              themeColors={themeColors}
+              onThemeColorsChange={setThemeColors}
+            />
+          </div>
+          <div className="flex justify-end">
+            <button
+              type="button"
+              onClick={handleSaveAppearance}
+              disabled={isSavingSettings || saveState !== 'idle'}
+              className={`flex items-center gap-2 px-4 py-2 rounded-lg text-white text-sm font-medium transition-all duration-300 disabled:cursor-default ${
+                saveState === 'success'
+                  ? 'bg-green-600 scale-105'
+                  : saveState === 'error'
+                    ? 'bg-red-600'
+                    : 'bg-blue-600 hover:bg-blue-700 disabled:opacity-50'
+              }`}
+            >
+              {isSavingSettings ? (
+                <svg className="animate-spin h-4 w-4" viewBox="0 0 24 24" fill="none">
+                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
+                </svg>
+              ) : saveState === 'success' ? (
+                <CheckCircle size={16} />
+              ) : saveState === 'error' ? (
+                <AlertCircle size={16} />
+              ) : (
+                <Save size={16} />
+              )}
+              {saveState === 'success'
+                ? '¡Guardado!'
+                : saveState === 'error'
+                  ? 'Error al guardar'
+                  : 'Guardar apariencia'}
+            </button>
+          </div>
+          {/* Toast */}
+          {saveState !== 'idle' && (
+            <div
+              className={`fixed bottom-6 right-6 z-50 flex items-center gap-2 px-5 py-3 rounded-xl shadow-xl text-white text-sm font-medium ${
+                saveState === 'success' ? 'bg-green-600' : 'bg-red-600'
+              }`}
+            >
+              {saveState === 'success' ? (
+                <><CheckCircle size={16} /> Apariencia guardada exitosamente</>
+              ) : (
+                <><AlertCircle size={16} /> Error al guardar. Intenta de nuevo.</>
+              )}
+            </div>
+          )}
+        </div>
+      )}
+
       {/* Tab: Preview */}
       {activeTab === 'preview' && (
         <div className="rounded-xl border border-gray-200 dark:border-gray-700 overflow-hidden bg-white dark:bg-gray-900">
@@ -170,11 +258,13 @@ export function PortfolioPage({ locale }: Props) {
               }
             }
             items={items}
+            themeColors={themeColors}
           />
           <PublicPortfolioGrid
             items={items}
             locale={locale}
             username={username ?? 'preview'}
+            themeColors={themeColors}
           />
         </div>
       )}

@@ -27,7 +27,7 @@ export async function getPublicLanding(
 ): Promise<PublicLandingResponse | null> {
   try {
     const res = await fetch(`${API_URL}/api/v1/public/landing/${username}/`, {
-      next: { revalidate: 60 },
+      cache: 'no-store',
     });
     if (!res.ok) return null;
     return res.json() as Promise<PublicLandingResponse>;
@@ -42,7 +42,7 @@ export async function getPublicPortfolio(
   try {
     const res = await fetch(
       `${API_URL}/api/v1/public/portafolio/${username}/`,
-      { next: { revalidate: 60 } },
+      { cache: 'no-store' },
     );
     if (!res.ok) return null;
     return res.json() as Promise<PublicPortfolioResponse>;

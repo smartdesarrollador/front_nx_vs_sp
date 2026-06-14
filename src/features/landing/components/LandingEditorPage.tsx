@@ -1,6 +1,6 @@
 'use client';
 import { useEffect, useState } from 'react';
-import { ExternalLink, Lock, Save } from 'lucide-react';
+import { AlertCircle, CheckCircle, ExternalLink, Lock, Save } from 'lucide-react';
 import { useFeatureGate } from '@/hooks/useFeatureGate';
 import { useAuthStore } from '@/store/authStore';
 import { UpgradePrompt } from '@/components/shared/UpgradePrompt';
@@ -34,7 +34,21 @@ export function LandingEditorPage({ locale }: Props) {
   const currentPlan = useAuthStore((s) => s.currentPlan) as Plan;
   const { data, isLoading } = useLandingTemplate();
   const { data: cardData } = useDigitalCard();
-  const { mutate, isPending, error } = useSaveLanding();
+  const { mutate, isPending } = useSaveLanding();
+  const [saveState, setSaveState] = useState<'idle' | 'success' | 'error'>('idle');
+
+  const handleSave = () => {
+    mutate(formState, {
+      onSuccess: () => {
+        setSaveState('success');
+        setTimeout(() => setSaveState('idle'), 5000);
+      },
+      onError: () => {
+        setSaveState('error');
+        setTimeout(() => setSaveState('idle'), 6000);
+      },
+    });
+  };
 
   const [activeTab, setActiveTab] = useState<Tab>('templates');
   const [formState, setFormState] = useState<LandingFormState>(DEFAULT_FORM_STATE);
@@ -91,26 +105,32 @@ export function LandingEditorPage({ locale }: Props) {
             </a>
           )}
           <button
-            onClick={() => mutate(formState)}
-            disabled={isPending}
-            className="flex items-center gap-2 px-4 py-2 rounded-lg bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium transition-colors disabled:opacity-50"
+            onClick={handleSave}
+            disabled={isPending || saveState !== 'idle'}
+            className={`flex items-center gap-2 px-4 py-2 rounded-lg text-white text-sm font-medium transition-all duration-300 disabled:cursor-default ${
+              saveState === 'success'
+                ? 'bg-green-600 scale-105'
+                : saveState === 'error'
+                  ? 'bg-red-600'
+                  : 'bg-blue-600 hover:bg-blue-700 disabled:opacity-50'
+            }`}
           >
             {isPending ? (
               <svg className="animate-spin h-4 w-4" viewBox="0 0 24 24" fill="none">
                 <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
                 <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
               </svg>
+            ) : saveState === 'success' ? (
+              <CheckCircle size={16} />
+            ) : saveState === 'error' ? (
+              <AlertCircle size={16} />
             ) : (
               <Save size={16} />
             )}
-            Guardar
+            {saveState === 'success' ? '¡Guardado!' : saveState === 'error' ? 'Error al guardar' : 'Guardar'}
           </button>
         </div>
       </div>
-
-      {error && (
-        <p className="text-sm text-red-500">Error al guardar. Intenta de nuevo.</p>
-      )}
 
       {/* Tab bar */}
       <div className="flex border-b border-gray-200 dark:border-gray-700">
@@ -136,6 +156,10 @@ export function LandingEditorPage({ locale }: Props) {
             selected={formState.template_type}
             onChange={(t) => setFormState((s) => ({ ...s, template_type: t }))}
             currentPlan={currentPlan}
+            themeColors={formState.theme_colors ?? {}}
+            accentColor={formState.accent_color}
+            onThemeColorsChange={(colors) => setFormState((s) => ({ ...s, theme_colors: colors }))}
+            onAccentColorChange={(color) => setFormState((s) => ({ ...s, accent_color: color }))}
           />
         </div>
       )}
@@ -231,42 +255,6 @@ export function LandingEditorPage({ locale }: Props) {
               </div>
             </div>
 
-            {/* Color de acento */}
-            <div>
-              <label className={labelClass}>Color de acento</label>
-              <div className="flex items-center gap-3">
-                <input
-                  type="color"
-                  value={formState.accent_color || '#2563eb'}
-                  onChange={(e) =>
-                    setFormState((s) => ({ ...s, accent_color: e.target.value }))
-                  }
-                  className="w-10 h-10 rounded-lg border border-gray-200 dark:border-gray-600 cursor-pointer p-0.5 bg-white dark:bg-gray-700"
-                />
-                <input
-                  className={`${inputClass} font-mono uppercase`}
-                  value={formState.accent_color}
-                  placeholder="#2563eb"
-                  maxLength={7}
-                  onChange={(e) =>
-                    setFormState((s) => ({ ...s, accent_color: e.target.value }))
-                  }
-                />
-                {formState.accent_color && (
-                  <button
-                    type="button"
-                    onClick={() => setFormState((s) => ({ ...s, accent_color: '' }))}
-                    className="text-xs text-gray-400 hover:text-gray-600 whitespace-nowrap"
-                  >
-                    Restablecer
-                  </button>
-                )}
-              </div>
-              <p className="text-xs text-gray-400 mt-1">
-                Personaliza el color de servicios, estadísticas y botones
-              </p>
-            </div>
-
             {/* Custom CSS — professional+ only */}
             <div>
               <div className="flex items-center gap-2 mb-1">
@@ -346,6 +334,21 @@ export function LandingEditorPage({ locale }: Props) {
           formState={formState}
           isLoading={isLoading}
         />
+      )}
+
+      {/* Toast de guardado */}
+      {saveState !== 'idle' && (
+        <div
+          className={`fixed bottom-6 right-6 z-50 flex items-center gap-2 px-5 py-3 rounded-xl shadow-xl text-white text-sm font-medium ${
+            saveState === 'success' ? 'bg-green-600' : 'bg-red-600'
+          }`}
+        >
+          {saveState === 'success' ? (
+            <><CheckCircle size={16} /> Landing guardada exitosamente</>
+          ) : (
+            <><AlertCircle size={16} /> Error al guardar. Intenta de nuevo.</>
+          )}
+        </div>
       )}
 
       {/* Section Picker Modal */}
