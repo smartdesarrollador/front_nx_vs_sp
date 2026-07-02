@@ -17,7 +17,7 @@ export function AboutSection({ profile, card, primaryColor }: Props) {
   if (!hasAbout && !hasExp) return null;
 
   return (
-    <section className="max-w-5xl mx-auto px-6 py-8 border-t border-gray-100 dark:border-gray-800">
+    <section className="lg:col-span-3 px-6 py-8 lg:px-8 border-t border-gray-100 dark:border-gray-800">
       <div className="grid grid-cols-1 lg:grid-cols-[1fr_auto] gap-8 items-start">
         {/* Bio + Specialties */}
         <div className="space-y-5">

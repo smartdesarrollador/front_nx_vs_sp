@@ -47,12 +47,12 @@ export function PublicCardView({ profile, card, publicUrl }: Props) {
             />
           ) : null}
         </div>
-      </div>
 
-      {/* About section (bio + specialties + years exp) */}
-      {card && (
-        <AboutSection profile={profile} card={card} primaryColor={primaryColor} />
-      )}
+        {/* Row 2 — About section (bio + specialties + years exp) */}
+        {card && (
+          <AboutSection profile={profile} card={card} primaryColor={primaryColor} />
+        )}
+      </div>
     </div>
   );
 }

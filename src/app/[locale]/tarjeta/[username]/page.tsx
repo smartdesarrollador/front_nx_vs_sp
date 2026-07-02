@@ -5,7 +5,6 @@ import { getPublicProfile } from '@/lib/publicApi';
 import { buildPersonJsonLd } from '@/lib/seo';
 import { PublicCardView } from '@/components/tarjeta/PublicCardView';
 import { ThemeToggle } from '@/components/shared/ThemeToggle';
-import Link from 'next/link';
 
 interface Props {
   params: Promise<{ locale: string; username: string }>;
@@ -55,13 +54,7 @@ export default async function TarjetaPage({ params }: Props) {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
       <div className="min-h-screen flex flex-col bg-gray-50 dark:bg-gray-950">
-        <header className="flex items-center justify-between px-6 py-4">
-          <Link
-            href={`/${locale}`}
-            className="text-xl font-bold text-primary-600 hover:text-primary-700 transition-colors"
-          >
-            Vista Digital
-          </Link>
+        <header className="flex items-center justify-end px-6 py-4">
           <ThemeToggle />
         </header>
 
