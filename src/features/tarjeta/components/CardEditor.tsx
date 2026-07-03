@@ -1,9 +1,14 @@
 'use client';
 import { useEffect, useState, KeyboardEvent } from 'react';
 import { useForm } from 'react-hook-form';
-import { X } from 'lucide-react';
+import { X, Plus } from 'lucide-react';
 import { useSaveCard } from '../hooks/useSaveCard';
-import type { CardData, CardFormData } from '../types';
+import type { CardData, CardFormData, CustomLink } from '../types';
+import {
+  CUSTOM_LINK_ICONS,
+  CUSTOM_LINK_ICON_OPTIONS,
+  DEFAULT_CUSTOM_LINK_ICON,
+} from '../customLinkIcons';
 
 interface FormValues {
   username: string;
@@ -60,6 +65,90 @@ function getDefaultValues(data: CardData | null): FormValues {
 
 const URL_REGEX = /^(https?:\/\/.+)?$/;
 
+interface CustomLinkRowProps {
+  link: CustomLink;
+  onChange: (patch: Partial<CustomLink>) => void;
+  onRemove: () => void;
+  error?: string;
+  inputClass: string;
+  errorClass: string;
+}
+
+function CustomLinkRow({ link, onChange, onRemove, error, inputClass, errorClass }: CustomLinkRowProps) {
+  const [pickerOpen, setPickerOpen] = useState(false);
+  const Icon = CUSTOM_LINK_ICONS[link.icon] ?? CUSTOM_LINK_ICONS[DEFAULT_CUSTOM_LINK_ICON];
+
+  return (
+    <div>
+      <div className="flex items-start gap-2">
+        <div className="relative shrink-0">
+          <button
+            type="button"
+            onClick={() => setPickerOpen((o) => !o)}
+            aria-label="Elegir ícono"
+            className="flex h-10 w-10 items-center justify-center rounded-lg border border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-600 dark:text-gray-300 hover:border-blue-400"
+          >
+            <Icon size={18} />
+          </button>
+          {pickerOpen && (
+            <>
+              <div
+                className="fixed inset-0 z-10"
+                onClick={() => setPickerOpen(false)}
+              />
+              <div className="absolute z-20 mt-1 grid grid-cols-4 gap-1 p-2 rounded-lg border border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-700 shadow-lg w-[168px]">
+                {CUSTOM_LINK_ICON_OPTIONS.map((opt) => {
+                  const OptIcon = CUSTOM_LINK_ICONS[opt.key];
+                  const isSelected = link.icon === opt.key;
+                  return (
+                    <button
+                      key={opt.key}
+                      type="button"
+                      title={opt.label}
+                      onClick={() => {
+                        onChange({ icon: opt.key });
+                        setPickerOpen(false);
+                      }}
+                      className={`flex items-center justify-center p-2 rounded ${
+                        isSelected
+                          ? 'bg-blue-100 dark:bg-blue-900/40 text-blue-600 dark:text-blue-300'
+                          : 'text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-600'
+                      }`}
+                    >
+                      <OptIcon size={16} />
+                    </button>
+                  );
+                })}
+              </div>
+            </>
+          )}
+        </div>
+        <input
+          value={link.label}
+          onChange={(e) => onChange({ label: e.target.value })}
+          className={inputClass}
+          placeholder="Nombre (ej: Mi tienda)"
+        />
+        <input
+          value={link.url}
+          onChange={(e) => onChange({ url: e.target.value })}
+          className={inputClass}
+          placeholder="https://..."
+        />
+        <button
+          type="button"
+          onClick={onRemove}
+          aria-label="Eliminar enlace"
+          className="shrink-0 flex h-10 w-10 items-center justify-center text-gray-400 hover:text-red-500"
+        >
+          <X className="w-4 h-4" />
+        </button>
+      </div>
+      {error && <p className={errorClass}>{error}</p>}
+    </div>
+  );
+}
+
 export function CardEditor({ data, onSaved }: CardEditorProps) {
   const { mutate: saveCard, isPending, error } = useSaveCard();
   const [urlErrors, setUrlErrors] = useState<Partial<Record<StringFormField, string>>>({});
@@ -67,6 +156,10 @@ export function CardEditor({ data, onSaved }: CardEditorProps) {
     data?.digital_card?.specialties ?? [] as string[],
   );
   const [specialtyInput, setSpecialtyInput] = useState('');
+  const [customLinks, setCustomLinks] = useState<CustomLink[]>(
+    data?.digital_card?.custom_links ?? [],
+  );
+  const [customLinkErrors, setCustomLinkErrors] = useState<Record<string, string>>({});
 
   const {
     register,
@@ -80,7 +173,9 @@ export function CardEditor({ data, onSaved }: CardEditorProps) {
   useEffect(() => {
     reset(getDefaultValues(data));
     setSpecialties(data?.digital_card?.specialties ?? [] as string[]);
+    setCustomLinks(data?.digital_card?.custom_links ?? []);
     setUrlErrors({});
+    setCustomLinkErrors({});
   }, [data, reset]);
 
   function handleSpecialtyKeyDown(e: KeyboardEvent<HTMLInputElement>) {
@@ -92,6 +187,29 @@ export function CardEditor({ data, onSaved }: CardEditorProps) {
       }
       setSpecialtyInput('');
     }
+  }
+
+  function addCustomLink() {
+    // crypto.randomUUID() requires a secure context (HTTPS/localhost) — unavailable on
+    // plain-HTTP local dev domains, so use a simple non-cryptographic id instead.
+    const id = `link-${Date.now()}-${Math.random().toString(36).slice(2, 9)}`;
+    setCustomLinks((prev) => [
+      ...prev,
+      { id, label: '', url: '', icon: DEFAULT_CUSTOM_LINK_ICON },
+    ]);
+  }
+
+  function updateCustomLink(id: string, patch: Partial<CustomLink>) {
+    setCustomLinks((prev) => prev.map((l) => (l.id === id ? { ...l, ...patch } : l)));
+  }
+
+  function removeCustomLink(id: string) {
+    setCustomLinks((prev) => prev.filter((l) => l.id !== id));
+    setCustomLinkErrors((prev) => {
+      const next = { ...prev };
+      delete next[id];
+      return next;
+    });
   }
 
   function removeSpecialty(index: number) {
@@ -122,10 +240,35 @@ export function CardEditor({ data, onSaved }: CardEditorProps) {
       return;
     }
     setUrlErrors({});
+
+    // Validate custom links: drop empty rows, require both fields on partial rows
+    const newCustomLinkErrors: Record<string, string> = {};
+    const validCustomLinks: CustomLink[] = [];
+    for (const link of customLinks) {
+      const hasLabel = link.label.trim() !== '';
+      const hasUrl = link.url.trim() !== '';
+      if (!hasLabel && !hasUrl) continue;
+      if (!hasLabel || !hasUrl) {
+        newCustomLinkErrors[link.id] = 'Completa nombre y URL';
+        continue;
+      }
+      if (!URL_REGEX.test(link.url)) {
+        newCustomLinkErrors[link.id] = 'URL inválida';
+        continue;
+      }
+      validCustomLinks.push(link);
+    }
+    if (Object.keys(newCustomLinkErrors).length > 0) {
+      setCustomLinkErrors(newCustomLinkErrors);
+      return;
+    }
+    setCustomLinkErrors({});
+
     saveCard(
       {
-        ...(values as Omit<CardFormData, 'specialties'>),
+        ...(values as Omit<CardFormData, 'specialties' | 'custom_links'>),
         specialties,
+        custom_links: validCustomLinks,
         years_experience: values.years_experience
           ? Number(values.years_experience)
           : null,
@@ -261,6 +404,34 @@ export function CardEditor({ data, onSaved }: CardEditorProps) {
               {urlErrors[field] && <p className={errorClass}>{urlErrors[field]}</p>}
             </div>
           ))}
+        </div>
+      </section>
+
+      {/* Seccion 3b: Otros enlaces */}
+      <section className="bg-white dark:bg-gray-800 rounded-xl p-5 border border-gray-100 dark:border-gray-700">
+        <h3 className="text-base font-semibold text-gray-900 dark:text-white mb-4">
+          Otros Enlaces
+        </h3>
+        <div className="space-y-3">
+          {customLinks.map((link) => (
+            <CustomLinkRow
+              key={link.id}
+              link={link}
+              onChange={(patch) => updateCustomLink(link.id, patch)}
+              onRemove={() => removeCustomLink(link.id)}
+              error={customLinkErrors[link.id]}
+              inputClass={inputClass}
+              errorClass={errorClass}
+            />
+          ))}
+          <button
+            type="button"
+            onClick={addCustomLink}
+            className="flex items-center gap-1.5 text-sm font-medium text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300"
+          >
+            <Plus className="w-4 h-4" />
+            Agregar enlace
+          </button>
         </div>
       </section>
 

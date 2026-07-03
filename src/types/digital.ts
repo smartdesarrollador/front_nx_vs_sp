@@ -10,6 +10,13 @@ export interface PublicProfile {
   og_image_url: string;
 }
 
+export interface CustomLink {
+  id: string;
+  label: string;
+  url: string;
+  icon: string;
+}
+
 export interface DigitalCard {
   email: string;
   phone: string;
@@ -25,6 +32,7 @@ export interface DigitalCard {
   qr_code_url: string;
   specialties: string[];
   years_experience: number | null;
+  custom_links: CustomLink[];
 }
 
 export interface PublicCardResponse {

@@ -1,6 +1,7 @@
-import type { PublicCardResponse } from '@/types/digital';
+import type { PublicCardResponse, CustomLink } from '@/types/digital';
 
 export type CardData = PublicCardResponse;
+export type { CustomLink };
 
 export interface CardFormData {
   username: string;
@@ -22,6 +23,7 @@ export interface CardFormData {
   background_color: string;
   specialties: string[];
   years_experience: number | null;
+  custom_links: CustomLink[];
 }
 
 export interface QRResponse {

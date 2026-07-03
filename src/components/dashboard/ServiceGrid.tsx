@@ -4,8 +4,10 @@ import { useState } from 'react';
 import { CreditCard, Globe, Briefcase, FileText } from 'lucide-react';
 import { useFeatureGate } from '@/hooks/useFeatureGate';
 import { useServiceStatus } from '@/hooks/useServiceStatus';
+import { useServiceAnalytics, getPlanDays } from '@/features/analytics/hooks/useServiceAnalytics';
+import { useAuthStore } from '@/store/authStore';
 import { getPlanDisplayName } from '@/data/featureGates';
-import type { FeatureKey } from '@/data/featureGates';
+import type { FeatureKey, Plan } from '@/data/featureGates';
 import { UpgradePrompt } from '@/components/shared/UpgradePrompt';
 import { ServiceCard } from './ServiceCard';
 import { QuickStats } from './QuickStats';
@@ -116,7 +118,7 @@ export function ServiceGrid({ locale }: ServiceGridProps) {
 
   return (
     <div className="space-y-6">
-      <ActiveCountWrapper profile={profile} />
+      <ActiveCountWrapper profile={profile} locale={locale} />
 
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
         {SERVICES.map((service) => (
@@ -142,7 +144,13 @@ export function ServiceGrid({ locale }: ServiceGridProps) {
 }
 
 // Separate component so each ServiceRow can call useFeatureGate independently
-function ActiveCountWrapper({ profile }: { profile: import('@/types/digital').DigitalProfile | null }) {
+function ActiveCountWrapper({
+  profile,
+  locale,
+}: {
+  profile: import('@/types/digital').DigitalProfile | null;
+  locale: string;
+}) {
   const card = useFeatureGate('digitalCard');
   const landing = useFeatureGate('landingPage');
   const portfolio = useFeatureGate('portfolio');
@@ -155,5 +163,35 @@ function ActiveCountWrapper({ profile }: { profile: import('@/types/digital').Di
     cv.canAccess && (profile?.has_cv ?? false),
   ].filter(Boolean).length;
 
-  return <QuickStats activeCount={activeCount} isLoading={false} />;
+  const { canAccess: hasAnalyticsAccess } = useFeatureGate('digitalCardAnalytics');
+  const currentPlan = useAuthStore((s) => s.currentPlan) as Plan;
+  const days = getPlanDays(currentPlan);
+
+  const tarjetaAnalytics = useServiceAnalytics('tarjeta', days, { enabled: hasAnalyticsAccess });
+  const landingAnalytics = useServiceAnalytics('landing', days, { enabled: hasAnalyticsAccess });
+  const portfolioAnalytics = useServiceAnalytics('portafolio', days, { enabled: hasAnalyticsAccess });
+  const cvAnalytics = useServiceAnalytics('cv', days, { enabled: hasAnalyticsAccess });
+
+  const analyticsLoading =
+    tarjetaAnalytics.isLoading ||
+    landingAnalytics.isLoading ||
+    portfolioAnalytics.isLoading ||
+    cvAnalytics.isLoading;
+
+  const totalViews =
+    (tarjetaAnalytics.data?.total_views ?? 0) +
+    (landingAnalytics.data?.total_views ?? 0) +
+    (portfolioAnalytics.data?.total_views ?? 0) +
+    (cvAnalytics.data?.total_views ?? 0);
+
+  return (
+    <QuickStats
+      activeCount={activeCount}
+      isLoading={false}
+      hasAnalyticsAccess={hasAnalyticsAccess}
+      analyticsLoading={analyticsLoading}
+      totalViews={totalViews}
+      analyticsHref={`/${locale}/dashboard/analytics`}
+    />
+  );
 }

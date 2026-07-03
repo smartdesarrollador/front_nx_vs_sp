@@ -10,7 +10,11 @@ export function getPlanDays(plan: Plan): number {
   return 7;
 }
 
-export function useServiceAnalytics(service: AnalyticsService, days: number) {
+export function useServiceAnalytics(
+  service: AnalyticsService,
+  days: number,
+  options?: { enabled?: boolean },
+) {
   return useQuery<ServiceAnalytics | null>({
     queryKey: ['analytics', service, days],
     queryFn: async () => {
@@ -26,5 +30,6 @@ export function useServiceAnalytics(service: AnalyticsService, days: number) {
       }
     },
     staleTime: 5 * 60_000,
+    enabled: options?.enabled ?? true,
   });
 }

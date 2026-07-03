@@ -37,6 +37,7 @@ export function useSaveCard() {
         background_color: payload.background_color,
         specialties: payload.specialties,
         years_experience: payload.years_experience,
+        custom_links: payload.custom_links,
       };
       const { data: cData } = await apiClient.post<{ card: DigitalCard }>(
         '/app/digital/tarjeta/',

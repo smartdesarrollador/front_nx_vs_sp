@@ -1,7 +1,19 @@
 import { render, screen } from '@testing-library/react';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ServiceGrid } from '@/components/dashboard/ServiceGrid';
 import { useFeatureGate } from '@/hooks/useFeatureGate';
 import { useServiceStatus } from '@/hooks/useServiceStatus';
+
+function renderServiceGrid(locale = 'es') {
+  const queryClient = new QueryClient({
+    defaultOptions: { queries: { retry: false } },
+  });
+  return render(
+    <QueryClientProvider client={queryClient}>
+      <ServiceGrid locale={locale} />
+    </QueryClientProvider>,
+  );
+}
 
 jest.mock('@/hooks/useFeatureGate', () => ({
   useFeatureGate: jest.fn(),
@@ -34,7 +46,7 @@ beforeEach(() => {
 
 describe('ServiceGrid', () => {
   it('renders all 4 service cards', () => {
-    render(<ServiceGrid locale="es" />);
+    renderServiceGrid();
     expect(screen.getByText('Tarjeta Digital')).toBeInTheDocument();
     expect(screen.getByText('Landing Page')).toBeInTheDocument();
     expect(screen.getByText('Portafolio Digital')).toBeInTheDocument();
@@ -43,7 +55,7 @@ describe('ServiceGrid', () => {
 
   it('shows loading skeleton when isLoading is true', () => {
     mockUseServiceStatus.mockReturnValue({ profile: null, isLoading: true });
-    const { container } = render(<ServiceGrid locale="es" />);
+    const { container } = renderServiceGrid();
     const skeletons = container.querySelectorAll('.animate-pulse');
     expect(skeletons.length).toBeGreaterThan(0);
   });
@@ -54,14 +66,14 @@ describe('ServiceGrid', () => {
       requiredPlan: key === 'landingPage' ? 'starter' : 'free',
     }));
 
-    render(<ServiceGrid locale="es" />);
+    renderServiceGrid();
 
     // Locked card renders "Actualizar plan →" button
     expect(screen.getByText('Actualizar plan →')).toBeInTheDocument();
   });
 
   it('shows "Configurar →" link for accessible services', () => {
-    render(<ServiceGrid locale="es" />);
+    renderServiceGrid();
     const configLinks = screen.getAllByText('Configurar →');
     expect(configLinks.length).toBeGreaterThan(0);
   });
@@ -84,7 +96,7 @@ describe('ServiceGrid', () => {
       isLoading: false,
     });
 
-    render(<ServiceGrid locale="es" />);
+    renderServiceGrid();
     expect(screen.getByText('Publicado')).toBeInTheDocument();
   });
 });

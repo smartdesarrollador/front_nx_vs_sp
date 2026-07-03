@@ -16,6 +16,17 @@ import {
 } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import type { DigitalCard, PublicProfile } from '@/types/digital';
+import { CUSTOM_LINK_ICONS, DEFAULT_CUSTOM_LINK_ICON } from '@/features/tarjeta/customLinkIcons';
+
+const API_URL = process.env.NEXT_PUBLIC_API_URL ?? '';
+
+function trackShare(username: string) {
+  fetch(`${API_URL}/api/v1/public/track-share/${username}/`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ service: 'tarjeta' }),
+  }).catch(() => {});
+}
 
 interface Props {
   card: DigitalCard;
@@ -132,9 +143,21 @@ export function ContactLinkList({ card, profile, publicUrl, primaryColor }: Prop
           iconColor: '#1877F2',
         }
       : null,
+    ...(card.custom_links ?? []).map((link) => {
+      const Icon = CUSTOM_LINK_ICONS[link.icon] ?? CUSTOM_LINK_ICONS[DEFAULT_CUSTOM_LINK_ICON];
+      return {
+        key: `custom-${link.id}`,
+        icon: <Icon className="w-5 h-5" />,
+        label: link.label,
+        sublabel: '',
+        href: link.url,
+        iconColor: primaryColor,
+      };
+    }),
   ].filter(Boolean) as ContactItem[];
 
   async function handleShare() {
+    trackShare(profile.username);
     if (navigator.share) {
       await navigator.share({ title: profile.display_name, url: publicUrl });
       return;

@@ -29,6 +29,7 @@ const mockCard: DigitalCard = {
   qr_code_url: '',
   specialties: [],
   years_experience: null,
+  custom_links: [],
 };
 
 describe('PublicCardView', () => {
