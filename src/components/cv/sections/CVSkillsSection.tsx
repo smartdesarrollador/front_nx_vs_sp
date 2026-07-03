@@ -1,4 +1,5 @@
 import type { CVSkill } from '@/types/digital';
+import type { CVStyleTokens } from '@/features/cv/types';
 
 export type SkillVariant = 'pills' | 'bars' | 'dots';
 
@@ -6,6 +7,7 @@ interface Props {
   skills: (CVSkill | string)[];
   title: string;
   variant?: SkillVariant;
+  styleTokens?: CVStyleTokens;
 }
 
 const LEVEL_PERCENT: Record<CVSkill['level'], number> = {
@@ -41,7 +43,7 @@ function normalize(s: CVSkill | string): CVSkill {
   return s;
 }
 
-export function CVSkillsSection({ skills, title, variant = 'pills' }: Props) {
+export function CVSkillsSection({ skills, title, variant = 'pills', styleTokens }: Props) {
   if (!skills.length) return null;
 
   const normalized = skills.map(normalize);
@@ -58,7 +60,7 @@ export function CVSkillsSection({ skills, title, variant = 'pills' }: Props) {
 
   return (
     <section>
-      <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-3 pb-2 border-b border-gray-200 dark:border-gray-700">
+      <h2 className={`text-lg mb-3 pb-2 border-b border-gray-200 dark:border-gray-700 text-gray-900 dark:text-white ${styleTokens?.headingFont ?? 'font-sans'} ${styleTokens?.headingWeight ?? 'font-semibold'} ${styleTokens?.headingTracking ?? ''}`}>
         {title}
       </h2>
 

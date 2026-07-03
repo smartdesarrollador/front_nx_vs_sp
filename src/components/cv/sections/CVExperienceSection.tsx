@@ -1,9 +1,11 @@
 import type { CVExperience } from '@/types/digital';
+import type { CVStyleTokens } from '@/features/cv/types';
 
 interface Props {
   experience: CVExperience[];
   presentLabel: string;
   title: string;
+  styleTokens?: CVStyleTokens;
 }
 
 function formatDate(dateStr: string): string {
@@ -21,11 +23,11 @@ const EMP_LABELS: Record<string, string> = {
   contract: 'Contrato',
 };
 
-export function CVExperienceSection({ experience, presentLabel, title }: Props) {
+export function CVExperienceSection({ experience, presentLabel, title, styleTokens }: Props) {
   if (!experience.length) return null;
   return (
     <section>
-      <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-4 pb-2 border-b border-gray-200 dark:border-gray-700">
+      <h2 className={`text-lg mb-4 pb-2 border-b border-gray-200 dark:border-gray-700 text-gray-900 dark:text-white ${styleTokens?.headingFont ?? 'font-sans'} ${styleTokens?.headingWeight ?? 'font-semibold'} ${styleTokens?.headingTracking ?? ''}`}>
         {title}
       </h2>
       <div className="space-y-5">

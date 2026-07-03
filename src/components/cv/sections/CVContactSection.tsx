@@ -1,4 +1,5 @@
 import type { PublicProfile } from '@/types/digital';
+import type { CVStyleTokens } from '@/features/cv/types';
 import { Mail, Phone } from 'lucide-react';
 
 interface Props {
@@ -7,15 +8,16 @@ interface Props {
   title: string;
   email?: string;
   phone?: string;
+  styleTokens?: CVStyleTokens;
 }
 
-export function CVContactSection({ profile, showContact, title, email, phone }: Props) {
+export function CVContactSection({ profile, showContact, title, email, phone, styleTokens }: Props) {
   if (!showContact) return null;
   if (!email && !phone) return null;
 
   return (
     <section>
-      <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-3 pb-2 border-b border-gray-200 dark:border-gray-700">
+      <h2 className={`text-lg mb-3 pb-2 border-b border-gray-200 dark:border-gray-700 text-gray-900 dark:text-white ${styleTokens?.headingFont ?? 'font-sans'} ${styleTokens?.headingWeight ?? 'font-semibold'} ${styleTokens?.headingTracking ?? ''}`}>
         {title}
       </h2>
       <div className="space-y-2">

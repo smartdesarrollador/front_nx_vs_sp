@@ -1,6 +1,7 @@
 import { ExternalLink } from 'lucide-react';
 import type { CVProject, CVVolunteer, CVAward } from '@/types/digital';
 import type { TemplateProps } from './ClassicTemplate';
+import { CV_STYLE_PRESET_TOKENS } from '@/features/cv/types';
 import { CVSkillsSection } from '../sections/CVSkillsSection';
 import { CVLanguagesSection } from '../sections/CVLanguagesSection';
 
@@ -23,6 +24,7 @@ export function MinimalTemplate({ profile, cv, labels, email, phone }: TemplateP
   const projects = cv.projects ?? [];
   const volunteer = cv.volunteer ?? [];
   const awards = cv.awards ?? [];
+  const styleTokens = CV_STYLE_PRESET_TOKENS[cv.style_preset ?? 'modern'];
 
   const contactParts = [
     cv.show_contact && email,
@@ -34,12 +36,18 @@ export function MinimalTemplate({ profile, cv, labels, email, phone }: TemplateP
   ].filter(Boolean) as string[];
 
   return (
-    <div className="bg-white dark:bg-gray-900 shadow-sm rounded-xl overflow-hidden p-8 md:p-12">
+    <div
+      className={`bg-white dark:bg-gray-900 overflow-hidden p-8 md:p-12 ${styleTokens.radiusCard} ${styleTokens.shadowCard}`}
+      style={cv.theme_colors?.background ? { backgroundColor: cv.theme_colors.background } : undefined}
+    >
       {/* Header row */}
       <div className="pb-6 border-b border-gray-200 dark:border-gray-700 mb-8">
         <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-2">
           <div>
-            <h1 className="text-3xl font-light tracking-wide text-gray-900 dark:text-white">
+            <h1
+              className="text-3xl font-light tracking-wide text-gray-900 dark:text-white"
+              style={cv.accent_color ? { color: cv.accent_color } : undefined}
+            >
               {profile.display_name}
             </h1>
             {(cv.headline || profile.title) && (
@@ -142,7 +150,7 @@ export function MinimalTemplate({ profile, cv, labels, email, phone }: TemplateP
                   const s = typeof skill === 'string' ? skill : skill.name;
                   const level = typeof skill === 'string' ? null : skill.level;
                   return (
-                    <span key={i} className="text-xs text-gray-600 dark:text-gray-300 bg-gray-100 dark:bg-gray-800 px-2 py-0.5 rounded">
+                    <span key={i} className="text-xs text-gray-600 dark:text-gray-300 bg-gray-100 dark:bg-gray-800 px-2 py-0.5 rounded-full">
                       {s}{level ? ` (${LEVEL_LABEL[level] ?? level})` : ''}
                     </span>
                   );

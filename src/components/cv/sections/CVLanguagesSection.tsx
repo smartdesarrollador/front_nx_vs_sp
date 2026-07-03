@@ -1,6 +1,9 @@
+import type { CVStyleTokens } from '@/features/cv/types';
+
 interface Props {
   languages: { name: string; level: string }[];
   title: string;
+  styleTokens?: CVStyleTokens;
 }
 
 const LEVEL_COLORS: Record<string, string> = {
@@ -10,11 +13,11 @@ const LEVEL_COLORS: Record<string, string> = {
   basic: 'bg-gray-100 text-gray-700 dark:bg-gray-700 dark:text-gray-300',
 };
 
-export function CVLanguagesSection({ languages, title }: Props) {
+export function CVLanguagesSection({ languages, title, styleTokens }: Props) {
   if (!languages.length) return null;
   return (
     <section>
-      <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-3 pb-2 border-b border-gray-200 dark:border-gray-700">
+      <h2 className={`text-lg mb-3 pb-2 border-b border-gray-200 dark:border-gray-700 text-gray-900 dark:text-white ${styleTokens?.headingFont ?? 'font-sans'} ${styleTokens?.headingWeight ?? 'font-semibold'} ${styleTokens?.headingTracking ?? ''}`}>
         {title}
       </h2>
       <div className="space-y-2">

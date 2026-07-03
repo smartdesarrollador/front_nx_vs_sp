@@ -1,6 +1,6 @@
 'use client';
 import { useEffect, useState } from 'react';
-import { ExternalLink, Save, ChevronDown, ChevronUp, Lock } from 'lucide-react';
+import { ExternalLink, Save, Check, ChevronDown, ChevronUp, Lock } from 'lucide-react';
 import { useAuthStore } from '@/store/authStore';
 import type { Plan, UpgradableFeatureKey } from '@/data/featureGates';
 import { FEATURES_BY_PLAN, UPGRADE_MESSAGES, getPlanDisplayName } from '@/data/featureGates';
@@ -48,7 +48,7 @@ import {
   formStateToPayload,
   type CVFormState,
 } from '../types';
-import { CVTemplateSelector } from './CVTemplateSelector';
+import { CVAppearanceTab } from './CVAppearanceTab';
 import { ExperienceList } from './ExperienceList';
 import { EducationList } from './EducationList';
 import { SkillsEditor } from './SkillsEditor';
@@ -59,7 +59,7 @@ import { VolunteerEditor } from './VolunteerEditor';
 import { AwardsEditor } from './AwardsEditor';
 import { ExportPDFButton } from './ExportPDFButton';
 
-type Tab = 'editor' | 'preview';
+type Tab = 'editor' | 'appearance' | 'preview';
 
 interface Props {
   locale: string;
@@ -108,6 +108,7 @@ export function CVEditorPage({ locale }: Props) {
   const [activeTab, setActiveTab] = useState<Tab>('editor');
   const [formState, setFormState] = useState<CVFormState>(DEFAULT_CV_FORM);
   const [configOpen, setConfigOpen] = useState(false);
+  const [justSaved, setJustSaved] = useState(false);
 
   useEffect(() => {
     if (data === undefined) return;
@@ -123,14 +124,18 @@ export function CVEditorPage({ locale }: Props) {
 
   const TABS: { id: Tab; label: string }[] = [
     { id: 'editor', label: 'Editor' },
+    { id: 'appearance', label: 'Apariencia' },
     { id: 'preview', label: 'Vista previa' },
   ];
 
   function handleSave() {
-    mutate(formStateToPayload(formState));
+    mutate(formStateToPayload(formState), {
+      onSuccess: () => {
+        setJustSaved(true);
+        setTimeout(() => setJustSaved(false), 2500);
+      },
+    });
   }
-
-  const accentColor = formState.accent_color;
 
   return (
     <div className="p-6 max-w-5xl mx-auto space-y-6">
@@ -152,17 +157,21 @@ export function CVEditorPage({ locale }: Props) {
           <button
             onClick={handleSave}
             disabled={isPending}
-            className="flex items-center gap-2 px-4 py-2 rounded-lg bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium transition-colors disabled:opacity-50"
+            className={`flex items-center gap-2 px-4 py-2 rounded-lg text-white text-sm font-medium transition-colors disabled:opacity-50 ${
+              justSaved ? 'bg-green-600 hover:bg-green-700' : 'bg-blue-600 hover:bg-blue-700'
+            }`}
           >
             {isPending ? (
               <svg className="animate-spin h-4 w-4" viewBox="0 0 24 24" fill="none">
                 <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
                 <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
               </svg>
+            ) : justSaved ? (
+              <Check size={16} />
             ) : (
               <Save size={16} />
             )}
-            Guardar
+            {justSaved ? 'Guardado' : 'Guardar'}
           </button>
         </div>
       </div>
@@ -274,39 +283,9 @@ export function CVEditorPage({ locale }: Props) {
                       </div>
                     </div>
 
-                    {/* Accent color + is_published */}
-                    <div className="flex flex-wrap gap-6 pt-2 border-t border-gray-100 dark:border-gray-700">
-                      {canAccentColor && (
-                        <div>
-                          <label className={labelClass}>Color de acento</label>
-                          <div className="flex items-center gap-3">
-                            <input
-                              type="color"
-                              value={accentColor || '#2563eb'}
-                              onChange={(e) => setFormState((s) => ({ ...s, accent_color: e.target.value }))}
-                              className="w-10 h-10 rounded-lg border border-gray-200 dark:border-gray-600 cursor-pointer p-0.5 bg-white dark:bg-gray-700"
-                            />
-                            <input
-                              className="w-28 rounded-lg border border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-700 px-3 py-2 text-sm font-mono uppercase text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
-                              value={accentColor}
-                              placeholder="#2563eb"
-                              maxLength={7}
-                              onChange={(e) => setFormState((s) => ({ ...s, accent_color: e.target.value }))}
-                            />
-                            {accentColor && (
-                              <button
-                                type="button"
-                                onClick={() => setFormState((s) => ({ ...s, accent_color: '' }))}
-                                className="text-xs text-gray-400 hover:text-gray-600"
-                              >
-                                Limpiar
-                              </button>
-                            )}
-                          </div>
-                        </div>
-                      )}
-
-                      <div className="flex items-center justify-between rounded-lg border border-gray-200 dark:border-gray-700 p-3 flex-1 min-w-[200px]">
+                    {/* is_published */}
+                    <div className="pt-2 border-t border-gray-100 dark:border-gray-700">
+                      <div className="flex items-center justify-between rounded-lg border border-gray-200 dark:border-gray-700 p-3">
                         <div>
                           <p className="text-sm font-medium text-gray-900 dark:text-white">
                             {formState.is_published ? 'CV Público' : 'CV Privado'}
@@ -334,35 +313,6 @@ export function CVEditorPage({ locale }: Props) {
                     </div>
                   </div>
                 )}
-              </div>
-
-              {/* Template selector + toggles */}
-              <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-6 space-y-4">
-                <CVTemplateSelector
-                  selected={formState.template_type}
-                  onChange={(t) => setFormState((s) => ({ ...s, template_type: t }))}
-                  currentPlan={currentPlan}
-                />
-                <div className="flex flex-wrap gap-4 pt-2 border-t border-gray-100 dark:border-gray-700">
-                  <label className="flex items-center gap-2 cursor-pointer">
-                    <input
-                      type="checkbox"
-                      checked={formState.show_photo}
-                      onChange={(e) => setFormState((s) => ({ ...s, show_photo: e.target.checked }))}
-                      className="w-4 h-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
-                    />
-                    <span className="text-sm text-gray-700 dark:text-gray-300">Mostrar foto</span>
-                  </label>
-                  <label className="flex items-center gap-2 cursor-pointer">
-                    <input
-                      type="checkbox"
-                      checked={formState.show_contact}
-                      onChange={(e) => setFormState((s) => ({ ...s, show_contact: e.target.checked }))}
-                      className="w-4 h-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
-                    />
-                    <span className="text-sm text-gray-700 dark:text-gray-300">Mostrar contacto</span>
-                  </label>
-                </div>
               </div>
 
               {/* Resumen profesional */}
@@ -469,6 +419,16 @@ export function CVEditorPage({ locale }: Props) {
             </>
           )}
         </div>
+      )}
+
+      {/* Tab: Apariencia */}
+      {activeTab === 'appearance' && (
+        <CVAppearanceTab
+          formState={formState}
+          setFormState={setFormState}
+          currentPlan={currentPlan}
+          canAccentColor={canAccentColor}
+        />
       )}
 
       {/* Tab: Preview */}

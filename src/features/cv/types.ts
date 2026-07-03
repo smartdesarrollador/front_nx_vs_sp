@@ -7,8 +7,43 @@ import type {
   CVProject,
   CVVolunteer,
   CVAward,
+  CVStylePreset,
 } from '@/types/digital';
-export type { CVDocument };
+export type { CVDocument, CVStylePreset };
+
+export interface CVStyleTokens {
+  radiusCard: string;
+  shadowCard: string;
+  spacingSection: string;
+  headingFont: string;
+  headingWeight: string;
+  headingTracking: string;
+  bodyLeading: string;
+}
+
+export const CV_STYLE_PRESET_TOKENS: Record<CVStylePreset, CVStyleTokens> = {
+  modern: {
+    radiusCard: 'rounded-xl', shadowCard: 'shadow-sm', spacingSection: 'gap-8',
+    headingFont: 'font-sans', headingWeight: 'font-semibold', headingTracking: 'tracking-normal',
+    bodyLeading: 'leading-relaxed',
+  },
+  classic: {
+    radiusCard: 'rounded-md', shadowCard: 'shadow-none', spacingSection: 'gap-6',
+    headingFont: 'font-sans', headingWeight: 'font-bold', headingTracking: 'tracking-tight',
+    bodyLeading: 'leading-normal',
+  },
+  soft: {
+    radiusCard: 'rounded-2xl', shadowCard: 'shadow-lg', spacingSection: 'gap-10',
+    headingFont: 'font-sans', headingWeight: 'font-medium', headingTracking: 'tracking-wide',
+    bodyLeading: 'leading-loose',
+  },
+};
+
+export const CV_STYLE_PRESET_META: Record<CVStylePreset, { name: string; description: string }> = {
+  modern: { name: 'Moderno', description: 'Bordes suaves, sombra sutil, look actual.' },
+  classic: { name: 'Clásico', description: 'Bordes rectos y planos, más compacto.' },
+  soft: { name: 'Suave', description: 'Muy redondeado, sombra pronunciada, look acogedor.' },
+};
 
 export interface CVFormExperience extends Omit<CVExperience, 'achievements' | 'employment_type'> {
   _id: string;
@@ -66,6 +101,9 @@ export interface CVFormState {
   linkedin_url: string;
   github_url: string;
   accent_color: string;
+  background_color: string;
+  sidebar_bg_color: string;
+  style_preset: CVStylePreset;
   is_published: boolean;
   projects: CVFormProject[];
   volunteer: CVFormVolunteer[];
@@ -94,6 +132,11 @@ export function formStateToPayload(s: CVFormState): CVDocument {
     linkedin_url: s.linkedin_url,
     github_url: s.github_url,
     accent_color: s.accent_color,
+    theme_colors: {
+      background: s.background_color,
+      sidebar_bg: s.sidebar_bg_color,
+    },
+    style_preset: s.style_preset,
     is_published: s.is_published,
     projects: s.projects.map(({ _id: _u, ...rest }) => rest),
     volunteer: s.volunteer.map(({ _id: _u, is_current, end_date, ...rest }) => ({
@@ -120,6 +163,9 @@ export const DEFAULT_CV_FORM: CVFormState = {
   linkedin_url: '',
   github_url: '',
   accent_color: '',
+  background_color: '',
+  sidebar_bg_color: '',
+  style_preset: 'modern',
   is_published: true,
   projects: [],
   volunteer: [],
@@ -167,6 +213,9 @@ export function cvDocumentToFormState(cv: CVDocument): CVFormState {
     linkedin_url: cv.linkedin_url ?? '',
     github_url: cv.github_url ?? '',
     accent_color: cv.accent_color ?? '',
+    background_color: cv.theme_colors?.background ?? '',
+    sidebar_bg_color: cv.theme_colors?.sidebar_bg ?? '',
+    style_preset: cv.style_preset ?? 'modern',
     is_published: cv.is_published ?? true,
     projects: (cv.projects ?? []).map((p) => ({ ...p, _id: uuid() })),
     volunteer: (cv.volunteer ?? []).map((v) => ({

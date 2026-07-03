@@ -245,6 +245,13 @@ export interface CVAward {
   description: string;
 }
 
+export interface CVThemeColors {
+  background?: string;
+  sidebar_bg?: string;
+}
+
+export type CVStylePreset = 'modern' | 'classic' | 'soft';
+
 export interface CVDocument {
   professional_summary: string;
   experience: CVExperience[];
@@ -261,6 +268,8 @@ export interface CVDocument {
   linkedin_url?: string;
   github_url?: string;
   accent_color?: string;
+  theme_colors?: CVThemeColors;
+  style_preset?: CVStylePreset;
   is_published?: boolean;
   projects?: CVProject[];
   volunteer?: CVVolunteer[];

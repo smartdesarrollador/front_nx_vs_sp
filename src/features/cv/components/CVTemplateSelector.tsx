@@ -42,9 +42,58 @@ interface Props {
   selected: TemplateType;
   onChange: (t: TemplateType) => void;
   currentPlan: Plan;
+  accentColor?: string;
+  backgroundColor?: string;
+  sidebarBg?: string;
 }
 
-export function CVTemplateSelector({ selected, onChange, currentPlan }: Props) {
+function TemplateMockup({
+  id,
+  accentColor,
+  backgroundColor,
+  sidebarBg,
+}: {
+  id: TemplateType;
+  accentColor?: string;
+  backgroundColor?: string;
+  sidebarBg?: string;
+}) {
+  const bg = backgroundColor || undefined;
+  const accent = accentColor || '#94a3b8';
+
+  if (id === 'classic') {
+    return (
+      <div className="h-16 rounded-lg mb-3 flex overflow-hidden border border-gray-200 dark:border-gray-700" style={{ background: bg }}>
+        <div className="w-1/3 h-full" style={{ background: sidebarBg || '#e5e7eb' }} />
+        <div className="flex-1 h-full p-2 space-y-1">
+          <div className="h-1.5 w-3/4 rounded" style={{ background: accent }} />
+          <div className="h-1 w-full rounded bg-gray-200 dark:bg-gray-600" />
+          <div className="h-1 w-5/6 rounded bg-gray-200 dark:bg-gray-600" />
+        </div>
+      </div>
+    );
+  }
+  if (id === 'modern') {
+    return (
+      <div className="h-16 rounded-lg mb-3 overflow-hidden border border-gray-200 dark:border-gray-700" style={{ background: bg }}>
+        <div className="h-7 w-full" style={{ background: accent }} />
+        <div className="p-2 space-y-1">
+          <div className="h-1 w-full rounded bg-gray-200 dark:bg-gray-600" />
+          <div className="h-1 w-5/6 rounded bg-gray-200 dark:bg-gray-600" />
+        </div>
+      </div>
+    );
+  }
+  return (
+    <div className="h-16 rounded-lg mb-3 p-2.5 space-y-1.5 border border-gray-200 dark:border-gray-700" style={{ background: bg }}>
+      <div className="h-1.5 w-1/2 rounded" style={{ background: accent }} />
+      <div className="h-1 w-full rounded bg-gray-200 dark:bg-gray-600" />
+      <div className="h-1 w-3/4 rounded bg-gray-200 dark:bg-gray-600" />
+    </div>
+  );
+}
+
+export function CVTemplateSelector({ selected, onChange, currentPlan, accentColor, backgroundColor, sidebarBg }: Props) {
   const maxTemplates = FEATURES_BY_PLAN[currentPlan].cvTemplates as number;
 
   return (
@@ -78,6 +127,12 @@ export function CVTemplateSelector({ selected, onChange, currentPlan }: Props) {
               {isSelected && !locked && (
                 <span className="absolute top-2 right-2 h-2 w-2 rounded-full bg-blue-600 dark:bg-blue-400" />
               )}
+              <TemplateMockup
+                id={tpl.id}
+                accentColor={accentColor}
+                backgroundColor={backgroundColor}
+                sidebarBg={sidebarBg}
+              />
               <span className="text-sm font-semibold text-gray-900 dark:text-white">{tpl.label}</span>
               <span className="text-xs text-gray-500 dark:text-gray-400 leading-relaxed">
                 {tpl.description}
