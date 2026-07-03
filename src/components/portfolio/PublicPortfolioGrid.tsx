@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { useTranslations } from 'next-intl';
 import { ExternalLink, Github, Star } from 'lucide-react';
 import type { PortfolioItem, PortfolioThemeColors } from '@/types/digital';
+import type { PortfolioStyleTokens } from '@/features/portfolio/types';
 
 export const CATEGORY_LABELS: Record<string, string> = {
   web: 'Web', mobile: 'Mobile', design: 'Diseño', branding: 'Branding',
@@ -31,6 +32,7 @@ interface Props {
   locale: string;
   username: string;
   themeColors?: PortfolioThemeColors;
+  styleTokens?: PortfolioStyleTokens;
 }
 
 interface CardProps {
@@ -39,16 +41,17 @@ interface CardProps {
   locale: string;
   username: string;
   t: ReturnType<typeof useTranslations>;
+  styleTokens?: PortfolioStyleTokens;
 }
 
-function PortfolioCard({ item, index, locale, username, t }: CardProps) {
+function PortfolioCard({ item, index, locale, username, t, styleTokens }: CardProps) {
   const gradient = CARD_GRADIENTS[index % CARD_GRADIENTS.length];
   const categoryLabel = item.category ? CATEGORY_LABELS[item.category] : null;
 
   return (
     <Link
       href={`/${locale}/portafolio/${username}/${item.slug}`}
-      className="group block bg-white dark:bg-gray-800 rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-shadow border border-gray-100 dark:border-gray-700"
+      className={`group block bg-white dark:bg-gray-800 overflow-hidden transition-shadow border border-gray-100 dark:border-gray-700 ${styleTokens?.radiusCard ?? 'rounded-xl'} ${styleTokens?.shadowCard ?? 'shadow-sm'} ${styleTokens?.shadowCardHover ?? 'hover:shadow-md'} ${styleTokens?.cardHover ?? ''}`}
     >
       {/* Cover image or gradient */}
       <div className={`relative h-48 bg-gradient-to-br ${gradient}`}>
@@ -136,7 +139,7 @@ function PortfolioCard({ item, index, locale, username, t }: CardProps) {
               href={item.demo_url}
               target="_blank"
               rel="noopener noreferrer"
-              className="flex items-center gap-1 text-xs px-3 py-1.5 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors"
+              className={`flex items-center gap-1 text-xs px-3 py-1.5 bg-primary-600 text-white hover:bg-primary-700 transition-colors ${styleTokens?.radiusButton ?? 'rounded-lg'}`}
             >
               <ExternalLink size={12} />
               {t('viewProject')}
@@ -147,7 +150,7 @@ function PortfolioCard({ item, index, locale, username, t }: CardProps) {
               href={item.repo_url}
               target="_blank"
               rel="noopener noreferrer"
-              className="flex items-center gap-1 text-xs px-3 py-1.5 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-200 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors"
+              className={`flex items-center gap-1 text-xs px-3 py-1.5 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-200 hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors ${styleTokens?.radiusButton ?? 'rounded-lg'}`}
             >
               <Github size={12} />
               {t('viewGithub')}
@@ -159,7 +162,7 @@ function PortfolioCard({ item, index, locale, username, t }: CardProps) {
   );
 }
 
-export function PublicPortfolioGrid({ items, locale, username, themeColors }: Props) {
+export function PublicPortfolioGrid({ items, locale, username, themeColors, styleTokens }: Props) {
   const t = useTranslations('portfolio');
   const [activeTag, setActiveTag] = useState('all');
   const [activeCategory, setActiveCategory] = useState('all');
@@ -177,7 +180,7 @@ export function PublicPortfolioGrid({ items, locale, username, themeColors }: Pr
   const featuredItems = items.filter((i) => i.is_featured);
 
   return (
-    <section className="max-w-6xl mx-auto px-4 pb-16">
+    <section id="projects" className="max-w-6xl mx-auto px-4 pb-16 scroll-mt-16">
       {/* Category filter */}
       {allCategories.length >= 2 && (
         <div className="mb-4 flex gap-2 flex-wrap">
@@ -266,6 +269,7 @@ export function PublicPortfolioGrid({ items, locale, username, themeColors }: Pr
                 locale={locale}
                 username={username}
                 t={t}
+                styleTokens={styleTokens}
               />
             ))}
           </div>
@@ -283,6 +287,7 @@ export function PublicPortfolioGrid({ items, locale, username, themeColors }: Pr
               locale={locale}
               username={username}
               t={t}
+              styleTokens={styleTokens}
             />
           ))}
         </div>

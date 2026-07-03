@@ -5,11 +5,15 @@ import {
   PORTFOLIO_TEMPLATE_META,
   type PortfolioTemplateType,
   type PortfolioThemeColors,
+  type PortfolioStylePreset,
 } from '../types';
+import { PortfolioStyleSelector } from './PortfolioStyleSelector';
 
 interface Props {
   themeColors: PortfolioThemeColors;
   onThemeColorsChange: (colors: PortfolioThemeColors) => void;
+  stylePreset: PortfolioStylePreset;
+  onStylePresetChange: (preset: PortfolioStylePreset) => void;
 }
 
 const TEMPLATES: PortfolioTemplateType[] = ['light', 'dark', 'creative', 'minimal'];
@@ -59,7 +63,12 @@ function ColorRow({ label, hint, value, onChange, onReset }: ColorRowProps) {
   );
 }
 
-export function PortfolioTemplateSelector({ themeColors, onThemeColorsChange }: Props) {
+export function PortfolioTemplateSelector({
+  themeColors,
+  onThemeColorsChange,
+  stylePreset,
+  onStylePresetChange,
+}: Props) {
   const applyPalette = (tpl: PortfolioTemplateType) => {
     onThemeColorsChange({ ...PORTFOLIO_PALETTES[tpl] });
   };
@@ -214,6 +223,12 @@ export function PortfolioTemplateSelector({ themeColors, onThemeColorsChange }: 
           />
         </div>
       </div>
+
+      {/* Separador */}
+      <hr className="border-gray-200 dark:border-gray-700" />
+
+      {/* Sección 3: Elige un estilo */}
+      <PortfolioStyleSelector selected={stylePreset} onChange={onStylePresetChange} />
     </div>
   );
 }

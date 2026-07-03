@@ -8,6 +8,11 @@ import { FEATURES_BY_PLAN, type Plan } from '@/data/featureGates';
 import { useDigitalCard } from '@/features/tarjeta/hooks/useDigitalCard';
 import { ProfileHero } from '@/components/portfolio/ProfileHero';
 import { PublicPortfolioGrid } from '@/components/portfolio/PublicPortfolioGrid';
+import { PortfolioAboutSection } from '@/components/portfolio/PortfolioAboutSection';
+import { PortfolioSkillsSection } from '@/components/portfolio/PortfolioSkillsSection';
+import { PortfolioServicesSection } from '@/components/portfolio/PortfolioServicesSection';
+import { PortfolioTestimonialsSection } from '@/components/portfolio/PortfolioTestimonialsSection';
+import { PortfolioContactSection } from '@/components/portfolio/PortfolioContactSection';
 import { usePortfolioItems } from '../hooks/usePortfolioItems';
 import { useCreateItem } from '../hooks/useCreateItem';
 import { useUpdateItem } from '../hooks/useUpdateItem';
@@ -16,9 +21,22 @@ import { usePortfolioSettings, useSavePortfolioSettings } from '../hooks/usePort
 import { ProjectCard } from './ProjectCard';
 import { ProjectModal } from './ProjectModal';
 import { PortfolioTemplateSelector } from './PortfolioTemplateSelector';
-import type { PortfolioItem, PortfolioForm, PortfolioThemeColors } from '../types';
+import { PortfolioConstructor } from './PortfolioConstructor';
+import { PORTFOLIO_STYLE_PRESET_TOKENS } from '../types';
+import type {
+  PortfolioItem,
+  PortfolioForm,
+  PortfolioThemeColors,
+  PortfolioHeroContent,
+  PortfolioContactContent,
+  PortfolioAboutContent,
+  PortfolioSkillsContent,
+  PortfolioServicesContent,
+  PortfolioTestimonialsContent,
+  PortfolioStylePreset,
+} from '../types';
 
-type Tab = 'projects' | 'appearance' | 'preview';
+type Tab = 'projects' | 'appearance' | 'constructor' | 'preview';
 
 interface Props {
   locale: string;
@@ -36,7 +54,14 @@ export function PortfolioPage({ locale }: Props) {
 
   const { data: settingsData } = usePortfolioSettings();
   const { mutate: saveSettings, isPending: isSavingSettings } = useSavePortfolioSettings();
+  const [stylePreset, setStylePreset] = useState<PortfolioStylePreset>('modern');
   const [themeColors, setThemeColors] = useState<PortfolioThemeColors>({});
+  const [heroContent, setHeroContent] = useState<PortfolioHeroContent>({});
+  const [contactContent, setContactContent] = useState<PortfolioContactContent>({});
+  const [aboutContent, setAboutContent] = useState<PortfolioAboutContent>({});
+  const [skillsContent, setSkillsContent] = useState<PortfolioSkillsContent>({});
+  const [servicesContent, setServicesContent] = useState<PortfolioServicesContent>({});
+  const [testimonialsContent, setTestimonialsContent] = useState<PortfolioTestimonialsContent>({});
   const [saveState, setSaveState] = useState<'idle' | 'success' | 'error'>('idle');
 
   const [modalOpen, setModalOpen] = useState(false);
@@ -45,14 +70,44 @@ export function PortfolioPage({ locale }: Props) {
   const [activeTab, setActiveTab] = useState<Tab>('projects');
 
   useEffect(() => {
+    if (settingsData?.style_preset) {
+      setStylePreset(settingsData.style_preset);
+    }
     if (settingsData?.theme_colors && Object.keys(settingsData.theme_colors).length > 0) {
       setThemeColors(settingsData.theme_colors);
     }
+    if (settingsData?.hero_content && Object.keys(settingsData.hero_content).length > 0) {
+      setHeroContent(settingsData.hero_content);
+    }
+    if (settingsData?.contact_content && Object.keys(settingsData.contact_content).length > 0) {
+      setContactContent(settingsData.contact_content);
+    }
+    if (settingsData?.about_content && Object.keys(settingsData.about_content).length > 0) {
+      setAboutContent(settingsData.about_content);
+    }
+    if (settingsData?.skills_content && Object.keys(settingsData.skills_content).length > 0) {
+      setSkillsContent(settingsData.skills_content);
+    }
+    if (settingsData?.services_content && Object.keys(settingsData.services_content).length > 0) {
+      setServicesContent(settingsData.services_content);
+    }
+    if (settingsData?.testimonials_content && Object.keys(settingsData.testimonials_content).length > 0) {
+      setTestimonialsContent(settingsData.testimonials_content);
+    }
   }, [settingsData]);
 
-  const handleSaveAppearance = () => {
+  const handleSaveSettings = () => {
     saveSettings(
-      { theme_colors: themeColors },
+      {
+        style_preset: stylePreset,
+        theme_colors: themeColors,
+        hero_content: heroContent,
+        contact_content: contactContent,
+        about_content: aboutContent,
+        skills_content: skillsContent,
+        services_content: servicesContent,
+        testimonials_content: testimonialsContent,
+      },
       {
         onSuccess: () => {
           setSaveState('success');
@@ -68,6 +123,18 @@ export function PortfolioPage({ locale }: Props) {
 
   const items = useMemo(() => data?.items ?? [], [data]);
   const profile = data?.profile;
+  const styleTokens = PORTFOLIO_STYLE_PRESET_TOKENS[stylePreset] ?? PORTFOLIO_STYLE_PRESET_TOKENS.modern;
+
+  // Tecnologías únicas ordenadas por frecuencia, para previsualizar la sección Habilidades
+  const previewSkills = useMemo(() => {
+    const counts = new Map<string, number>();
+    items.forEach((item) => {
+      (item.technologies ?? []).forEach((tech) => {
+        counts.set(tech, (counts.get(tech) ?? 0) + 1);
+      });
+    });
+    return [...counts.entries()].sort((a, b) => b[1] - a[1]).map(([tech]) => tech);
+  }, [items]);
 
   const maxGalleryImages = FEATURES_BY_PLAN[currentPlan].portfolioGalleryImages as number;
 
@@ -136,8 +203,54 @@ export function PortfolioPage({ locale }: Props) {
   const TABS: { id: Tab; label: string }[] = [
     { id: 'projects', label: 'Proyectos' },
     { id: 'appearance', label: 'Apariencia' },
+    { id: 'constructor', label: 'Constructor' },
     { id: 'preview', label: 'Preview' },
   ];
+
+  const saveButton = (
+    <div className="flex justify-end">
+      <button
+        type="button"
+        onClick={handleSaveSettings}
+        disabled={isSavingSettings || saveState !== 'idle'}
+        className={`flex items-center gap-2 px-4 py-2 rounded-lg text-white text-sm font-medium transition-all duration-300 disabled:cursor-default ${
+          saveState === 'success'
+            ? 'bg-green-600 scale-105'
+            : saveState === 'error'
+              ? 'bg-red-600'
+              : 'bg-blue-600 hover:bg-blue-700 disabled:opacity-50'
+        }`}
+      >
+        {isSavingSettings ? (
+          <svg className="animate-spin h-4 w-4" viewBox="0 0 24 24" fill="none">
+            <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+            <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
+          </svg>
+        ) : saveState === 'success' ? (
+          <CheckCircle size={16} />
+        ) : saveState === 'error' ? (
+          <AlertCircle size={16} />
+        ) : (
+          <Save size={16} />
+        )}
+        {saveState === 'success' ? '¡Guardado!' : saveState === 'error' ? 'Error al guardar' : 'Guardar cambios'}
+      </button>
+    </div>
+  );
+
+  const saveToast = saveState !== 'idle' && (
+    <div
+      className={`fixed bottom-6 right-6 z-50 flex items-center gap-2 px-5 py-3 rounded-xl shadow-xl text-white text-sm font-medium ${
+        saveState === 'success' ? 'bg-green-600' : 'bg-red-600'
+      }`}
+    >
+      {saveState === 'success' ? (
+        <><CheckCircle size={16} /> Cambios guardados exitosamente</>
+      ) : (
+        <><AlertCircle size={16} /> Error al guardar. Intenta de nuevo.</>
+      )}
+    </div>
+  );
 
   return (
     <div className="p-6 max-w-5xl mx-auto space-y-6">
@@ -189,54 +302,37 @@ export function PortfolioPage({ locale }: Props) {
             <PortfolioTemplateSelector
               themeColors={themeColors}
               onThemeColorsChange={setThemeColors}
+              stylePreset={stylePreset}
+              onStylePresetChange={setStylePreset}
             />
           </div>
-          <div className="flex justify-end">
-            <button
-              type="button"
-              onClick={handleSaveAppearance}
-              disabled={isSavingSettings || saveState !== 'idle'}
-              className={`flex items-center gap-2 px-4 py-2 rounded-lg text-white text-sm font-medium transition-all duration-300 disabled:cursor-default ${
-                saveState === 'success'
-                  ? 'bg-green-600 scale-105'
-                  : saveState === 'error'
-                    ? 'bg-red-600'
-                    : 'bg-blue-600 hover:bg-blue-700 disabled:opacity-50'
-              }`}
-            >
-              {isSavingSettings ? (
-                <svg className="animate-spin h-4 w-4" viewBox="0 0 24 24" fill="none">
-                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
-                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
-                </svg>
-              ) : saveState === 'success' ? (
-                <CheckCircle size={16} />
-              ) : saveState === 'error' ? (
-                <AlertCircle size={16} />
-              ) : (
-                <Save size={16} />
-              )}
-              {saveState === 'success'
-                ? '¡Guardado!'
-                : saveState === 'error'
-                  ? 'Error al guardar'
-                  : 'Guardar apariencia'}
-            </button>
+          {saveButton}
+          {saveToast}
+        </div>
+      )}
+
+      {/* Tab: Constructor */}
+      {activeTab === 'constructor' && (
+        <div className="space-y-4">
+          <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-6">
+            <PortfolioConstructor
+              heroContent={heroContent}
+              onHeroContentChange={setHeroContent}
+              aboutContent={aboutContent}
+              onAboutContentChange={setAboutContent}
+              skillsContent={skillsContent}
+              onSkillsContentChange={setSkillsContent}
+              servicesContent={servicesContent}
+              onServicesContentChange={setServicesContent}
+              testimonialsContent={testimonialsContent}
+              onTestimonialsContentChange={setTestimonialsContent}
+              contactContent={contactContent}
+              onContactContentChange={setContactContent}
+              locale={locale}
+            />
           </div>
-          {/* Toast */}
-          {saveState !== 'idle' && (
-            <div
-              className={`fixed bottom-6 right-6 z-50 flex items-center gap-2 px-5 py-3 rounded-xl shadow-xl text-white text-sm font-medium ${
-                saveState === 'success' ? 'bg-green-600' : 'bg-red-600'
-              }`}
-            >
-              {saveState === 'success' ? (
-                <><CheckCircle size={16} /> Apariencia guardada exitosamente</>
-              ) : (
-                <><AlertCircle size={16} /> Error al guardar. Intenta de nuevo.</>
-              )}
-            </div>
-          )}
+          {saveButton}
+          {saveToast}
         </div>
       )}
 
@@ -259,11 +355,25 @@ export function PortfolioPage({ locale }: Props) {
             }
             items={items}
             themeColors={themeColors}
+            heroContent={heroContent}
+            digitalCard={cardData?.digital_card}
+            styleTokens={styleTokens}
           />
+          <PortfolioAboutSection aboutContent={aboutContent} styleTokens={styleTokens} />
+          <PortfolioSkillsSection skillsContent={skillsContent} skills={previewSkills} styleTokens={styleTokens} />
+          <PortfolioServicesSection servicesContent={servicesContent} styleTokens={styleTokens} />
           <PublicPortfolioGrid
             items={items}
             locale={locale}
             username={username ?? 'preview'}
+            themeColors={themeColors}
+            styleTokens={styleTokens}
+          />
+          <PortfolioTestimonialsSection testimonialsContent={testimonialsContent} styleTokens={styleTokens} />
+          <PortfolioContactSection
+            contactContent={contactContent}
+            digitalCard={cardData?.digital_card}
+            styleTokens={styleTokens}
             themeColors={themeColors}
           />
         </div>

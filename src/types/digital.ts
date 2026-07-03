@@ -47,6 +47,8 @@ export type LandingTemplateType = 'basic' | 'minimal' | 'corporate' | 'creative'
 
 export type LandingStylePreset = 'modern' | 'classic' | 'soft' | 'editorial' | 'bold';
 
+export type PortfolioStylePreset = 'modern' | 'classic' | 'soft' | 'editorial' | 'bold';
+
 export interface LandingSection {
   type: LandingSectionType;
   content: Record<string, unknown>;
@@ -123,10 +125,68 @@ export interface PortfolioThemeColors {
   nav_bg?: string;
 }
 
+export interface PortfolioHeroContent {
+  badge?: string;
+  ctaText?: string;
+  ctaUrl?: string;
+  showSocialLinks?: boolean;
+}
+
+export interface PortfolioContactContent {
+  title?: string;
+  description?: string;
+}
+
+export interface PortfolioAboutContent {
+  title?: string;
+  text?: string;
+  highlights?: string[];
+}
+
+export interface PortfolioSkillsContent {
+  title?: string;
+  showSkills?: boolean;
+}
+
+export interface PortfolioServiceItem {
+  icon?: string;
+  title: string;
+  description: string;
+  link?: string;
+}
+
+export interface PortfolioServicesContent {
+  title?: string;
+  items?: PortfolioServiceItem[];
+}
+
+export interface PortfolioTestimonialItem {
+  name: string;
+  role?: string;
+  company?: string;
+  text: string;
+  rating?: number;
+  avatarUrl?: string;
+}
+
+export interface PortfolioTestimonialsContent {
+  title?: string;
+  items?: PortfolioTestimonialItem[];
+}
+
 export interface PublicPortfolioResponse {
   profile: PublicProfile;
   items: PortfolioItem[];
+  style_preset?: PortfolioStylePreset;
   theme_colors?: PortfolioThemeColors;
+  hero_content?: PortfolioHeroContent;
+  contact_content?: PortfolioContactContent;
+  about_content?: PortfolioAboutContent;
+  skills_content?: PortfolioSkillsContent;
+  skills?: string[];
+  services_content?: PortfolioServicesContent;
+  testimonials_content?: PortfolioTestimonialsContent;
+  digital_card?: DigitalCard | null;
 }
 
 export interface CVExperience {

@@ -1,6 +1,151 @@
-import type { PortfolioItem as BasePortfolioItem, PortfolioCategory, PortfolioStatus, PortfolioThemeColors } from '@/types/digital';
+import type {
+  PortfolioItem as BasePortfolioItem,
+  PortfolioCategory,
+  PortfolioStatus,
+  PortfolioThemeColors,
+  PortfolioHeroContent,
+  PortfolioContactContent,
+  PortfolioAboutContent,
+  PortfolioSkillsContent,
+  PortfolioServiceItem,
+  PortfolioServicesContent,
+  PortfolioTestimonialItem,
+  PortfolioTestimonialsContent,
+  PortfolioStylePreset,
+} from '@/types/digital';
 
-export type { PortfolioThemeColors };
+export type {
+  PortfolioThemeColors,
+  PortfolioHeroContent,
+  PortfolioContactContent,
+  PortfolioAboutContent,
+  PortfolioSkillsContent,
+  PortfolioServiceItem,
+  PortfolioServicesContent,
+  PortfolioTestimonialItem,
+  PortfolioTestimonialsContent,
+  PortfolioStylePreset,
+};
+
+export interface PortfolioStyleTokens {
+  radiusCard: string;
+  radiusButton: string;
+  radiusInput: string;
+  shadowCard: string;
+  shadowCardHover: string;
+  shadowButton: string;
+  shadowButtonHover: string;
+  cardHover: string;
+  buttonHover: string;
+  spacingHero: string;
+  spacingSection: string;
+  spacingFooter: string;
+  headingFont: string;
+  headingWeight: string;
+  headingTracking: string;
+  bodyLeading: string;
+}
+
+export const PORTFOLIO_STYLE_PRESET_TOKENS: Record<PortfolioStylePreset, PortfolioStyleTokens> = {
+  modern: {
+    radiusCard: 'rounded-xl',
+    radiusButton: 'rounded-lg',
+    radiusInput: 'rounded-lg',
+    shadowCard: 'shadow-sm',
+    shadowCardHover: 'hover:shadow-md',
+    shadowButton: '',
+    shadowButtonHover: '',
+    cardHover: '',
+    buttonHover: '',
+    spacingHero: 'py-12',
+    spacingSection: 'py-12',
+    spacingFooter: 'py-6',
+    headingFont: 'font-sans',
+    headingWeight: 'font-bold',
+    headingTracking: 'tracking-tight',
+    bodyLeading: 'leading-relaxed',
+  },
+  classic: {
+    radiusCard: 'rounded-md',
+    radiusButton: 'rounded-md',
+    radiusInput: 'rounded-md',
+    shadowCard: 'shadow-none',
+    shadowCardHover: 'hover:shadow-sm',
+    shadowButton: 'shadow-none',
+    shadowButtonHover: 'hover:shadow-sm',
+    cardHover: '',
+    buttonHover: '',
+    spacingHero: 'py-16',
+    spacingSection: 'py-16',
+    spacingFooter: 'py-8',
+    headingFont: 'font-sans',
+    headingWeight: 'font-semibold',
+    headingTracking: 'tracking-normal',
+    bodyLeading: 'leading-relaxed',
+  },
+  soft: {
+    radiusCard: 'rounded-3xl',
+    radiusButton: 'rounded-full',
+    radiusInput: 'rounded-2xl',
+    shadowCard: 'shadow-md',
+    shadowCardHover: 'hover:shadow-xl',
+    shadowButton: 'shadow-lg',
+    shadowButtonHover: 'hover:shadow-xl',
+    cardHover: 'hover:-translate-y-1',
+    buttonHover: 'hover:-translate-y-0.5',
+    spacingHero: 'py-16',
+    spacingSection: 'py-20',
+    spacingFooter: 'py-10',
+    headingFont: 'font-sans',
+    headingWeight: 'font-bold',
+    headingTracking: 'tracking-tight',
+    bodyLeading: 'leading-loose',
+  },
+  editorial: {
+    radiusCard: 'rounded-sm',
+    radiusButton: 'rounded-none',
+    radiusInput: 'rounded-sm',
+    shadowCard: 'shadow-none',
+    shadowCardHover: 'hover:shadow-none',
+    shadowButton: 'shadow-none',
+    shadowButtonHover: 'hover:shadow-none',
+    cardHover: '',
+    buttonHover: '',
+    spacingHero: 'py-20',
+    spacingSection: 'py-16',
+    spacingFooter: 'py-8',
+    headingFont: 'font-editorial',
+    headingWeight: 'font-semibold',
+    headingTracking: 'tracking-normal',
+    bodyLeading: 'leading-loose',
+  },
+  bold: {
+    radiusCard: 'rounded-none',
+    radiusButton: 'rounded-none',
+    radiusInput: 'rounded-none',
+    shadowCard: 'shadow-[6px_6px_0_0_rgba(148,163,184,0.5)]',
+    shadowCardHover: 'hover:shadow-[8px_8px_0_0_rgba(148,163,184,0.55)]',
+    shadowButton: 'shadow-[6px_6px_0_0_rgba(148,163,184,0.5)]',
+    shadowButtonHover: 'hover:shadow-[8px_8px_0_0_rgba(148,163,184,0.55)]',
+    cardHover: 'hover:-translate-y-0.5',
+    buttonHover: 'hover:-translate-y-0.5',
+    spacingHero: 'py-16',
+    spacingSection: 'py-16',
+    spacingFooter: 'py-8',
+    headingFont: 'font-sans',
+    headingWeight: 'font-black',
+    headingTracking: 'uppercase tracking-tight',
+    bodyLeading: 'leading-relaxed',
+  },
+};
+
+export const PORTFOLIO_STYLE_PRESET_META: Record<PortfolioStylePreset, { name: string; description: string }> = {
+  modern: { name: 'Moderno', description: 'Bordes suaves, sombra sutil, look actual.' },
+  classic: { name: 'Clásico', description: 'Bordes rectos y planos, espaciado generoso.' },
+  soft: { name: 'Suave', description: 'Muy redondeado, sombras difusas, look acogedor.' },
+  editorial: { name: 'Editorial', description: 'Tipografía serif, minimalista y sin decoración.' },
+  bold: { name: 'Audaz', description: 'Títulos extra gruesos en mayúsculas, sombras marcadas, look llamativo.' },
+};
 
 export type PortfolioTemplateType = 'light' | 'dark' | 'creative' | 'minimal';
 
