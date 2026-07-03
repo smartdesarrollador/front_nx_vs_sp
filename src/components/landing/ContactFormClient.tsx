@@ -2,12 +2,14 @@
 import { useState } from 'react';
 import { useTranslations } from 'next-intl';
 import { Send, CheckCircle } from 'lucide-react';
+import type { StyleTokens } from '@/features/landing/types';
 
 interface Props {
   contactEmail: string;
+  styleTokens: StyleTokens;
 }
 
-export function ContactFormClient({ contactEmail }: Props) {
+export function ContactFormClient({ contactEmail, styleTokens }: Props) {
   const t = useTranslations('landing');
   const [sent, setSent] = useState(false);
   const [name, setName] = useState('');
@@ -41,7 +43,7 @@ export function ContactFormClient({ contactEmail }: Props) {
         placeholder={t('namePlaceholder')}
         value={name}
         onChange={(e) => setName(e.target.value)}
-        className="w-full px-4 py-3 rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-primary-500"
+        className={`w-full px-4 py-3 ${styleTokens.radiusInput} border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-primary-500`}
       />
       <input
         type="email"
@@ -49,7 +51,7 @@ export function ContactFormClient({ contactEmail }: Props) {
         placeholder={t('emailPlaceholder')}
         value={email}
         onChange={(e) => setEmail(e.target.value)}
-        className="w-full px-4 py-3 rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-primary-500"
+        className={`w-full px-4 py-3 ${styleTokens.radiusInput} border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-primary-500`}
       />
       <textarea
         required
@@ -57,11 +59,11 @@ export function ContactFormClient({ contactEmail }: Props) {
         placeholder={t('messagePlaceholder')}
         value={message}
         onChange={(e) => setMessage(e.target.value)}
-        className="w-full px-4 py-3 rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-primary-500 resize-none"
+        className={`w-full px-4 py-3 ${styleTokens.radiusInput} border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-primary-500 resize-none`}
       />
       <button
         type="submit"
-        className="w-full flex items-center justify-center gap-2 py-3 px-6 bg-primary-600 text-white rounded-lg font-medium hover:bg-primary-700 transition-colors"
+        className={`w-full flex items-center justify-center gap-2 py-3 px-6 bg-primary-600 text-white ${styleTokens.radiusButton} font-medium hover:bg-primary-700 transition-colors ${styleTokens.shadowButton} ${styleTokens.shadowButtonHover} ${styleTokens.buttonHover}`}
       >
         <Send className="w-4 h-4" />
         {t('sendMessage')}

@@ -1,5 +1,6 @@
 import { Linkedin, Github, Twitter, Instagram, Globe, Music2 } from 'lucide-react';
 import type { LandingSocialLinks } from '@/types/digital';
+import type { StyleTokens } from '@/features/landing/types';
 
 interface Props {
   displayName: string;
@@ -7,6 +8,7 @@ interface Props {
   socialLinks: LandingSocialLinks;
   locale: string;
   poweredByText?: string;
+  styleTokens: StyleTokens;
 }
 
 const SOCIAL_ICONS = [
@@ -18,12 +20,12 @@ const SOCIAL_ICONS = [
   { key: 'tiktok' as const, Icon: Music2, label: 'TikTok' },
 ];
 
-export function PublicLandingFooter({ displayName, socialLinks, poweredByText }: Props) {
+export function PublicLandingFooter({ displayName, socialLinks, poweredByText, styleTokens }: Props) {
   const year = new Date().getFullYear();
   const activeSocials = SOCIAL_ICONS.filter(({ key }) => socialLinks?.[key]);
 
   return (
-    <footer className="border-t border-gray-100 dark:border-gray-800 bg-white dark:bg-gray-900 py-10 px-4">
+    <footer className={`border-t border-gray-100 dark:border-gray-800 bg-white dark:bg-gray-900 ${styleTokens.spacingFooter} px-4`}>
       <div className="max-w-5xl mx-auto">
         <div className="flex flex-col sm:flex-row items-center justify-between gap-6 mb-6">
           <div className="text-center sm:text-left">

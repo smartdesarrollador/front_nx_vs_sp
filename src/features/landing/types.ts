@@ -1,6 +1,6 @@
-import type { LandingSection, LandingSectionType, LandingSocialLinks, LandingTemplateType, LandingThemeColors } from '@/types/digital';
+import type { LandingSection, LandingSectionType, LandingSocialLinks, LandingTemplateType, LandingThemeColors, LandingStylePreset } from '@/types/digital';
 import type { Plan } from '@/data/featureGates';
-export type { LandingThemeColors };
+export type { LandingThemeColors, LandingStylePreset };
 
 // Tipos de contenido por sección
 export interface HeroContent {
@@ -80,6 +80,7 @@ export interface FeaturesContent {
 // Estado local de trabajo (copia mutable antes de guardar)
 export interface LandingFormState {
   template_type: LandingTemplateType;
+  style_preset: LandingStylePreset;
   sections: LandingSection[];
   contact_email: string;
   enable_contact_form: boolean;
@@ -229,8 +230,136 @@ export const TEMPLATE_PALETTES: Record<LandingTemplateType, LandingThemeColors &
   minimal:   { hero_bg: '#ffffff', hero_text: '#111827', button_bg: '#2563eb', nav_bg: '#f8fafc', accent: '#2563eb' },
 };
 
+// Tokens de forma (bordes, sombras, espaciado) por estilo — independiente de la paleta de color
+export interface StyleTokens {
+  radiusCard: string;
+  radiusButton: string;
+  radiusInput: string;
+  shadowCard: string;
+  shadowCardHover: string;
+  shadowButton: string;
+  shadowButtonHover: string;
+  cardHover: string;
+  buttonHover: string;
+  spacingHero: string;
+  spacingSection: string;
+  spacingFooter: string;
+  headingFont: string;
+  headingWeight: string;
+  headingTracking: string;
+  bodyLeading: string;
+  heroShape: 'blobs' | 'none' | 'diagonal';
+}
+
+export const STYLE_PRESET_TOKENS: Record<LandingStylePreset, StyleTokens> = {
+  modern: {
+    radiusCard: 'rounded-2xl',
+    radiusButton: 'rounded-full',
+    radiusInput: 'rounded-lg',
+    shadowCard: 'shadow-sm',
+    shadowCardHover: 'hover:shadow-lg',
+    shadowButton: 'shadow-lg',
+    shadowButtonHover: 'hover:shadow-xl',
+    cardHover: 'hover:-translate-y-1',
+    buttonHover: 'hover:-translate-y-0.5',
+    spacingHero: 'py-32',
+    spacingSection: 'py-16',
+    spacingFooter: 'py-10',
+    headingFont: 'font-sans',
+    headingWeight: 'font-bold',
+    headingTracking: 'tracking-tight',
+    bodyLeading: 'leading-relaxed',
+    heroShape: 'blobs',
+  },
+  classic: {
+    radiusCard: 'rounded-md',
+    radiusButton: 'rounded-md',
+    radiusInput: 'rounded-md',
+    shadowCard: 'shadow-none',
+    shadowCardHover: 'hover:shadow-sm',
+    shadowButton: 'shadow-none',
+    shadowButtonHover: 'hover:shadow-sm',
+    cardHover: '',
+    buttonHover: '',
+    spacingHero: 'py-28',
+    spacingSection: 'py-20',
+    spacingFooter: 'py-12',
+    headingFont: 'font-sans',
+    headingWeight: 'font-semibold',
+    headingTracking: 'tracking-normal',
+    bodyLeading: 'leading-relaxed',
+    heroShape: 'none',
+  },
+  soft: {
+    radiusCard: 'rounded-3xl',
+    radiusButton: 'rounded-full',
+    radiusInput: 'rounded-2xl',
+    shadowCard: 'shadow-md',
+    shadowCardHover: 'hover:shadow-2xl',
+    shadowButton: 'shadow-xl',
+    shadowButtonHover: 'hover:shadow-2xl',
+    cardHover: 'hover:-translate-y-1.5',
+    buttonHover: 'hover:-translate-y-1',
+    spacingHero: 'py-36',
+    spacingSection: 'py-24',
+    spacingFooter: 'py-14',
+    headingFont: 'font-sans',
+    headingWeight: 'font-bold',
+    headingTracking: 'tracking-tight',
+    bodyLeading: 'leading-loose',
+    heroShape: 'blobs',
+  },
+  editorial: {
+    radiusCard: 'rounded-sm',
+    radiusButton: 'rounded-none',
+    radiusInput: 'rounded-sm',
+    shadowCard: 'shadow-none',
+    shadowCardHover: 'hover:shadow-none',
+    shadowButton: 'shadow-none',
+    shadowButtonHover: 'hover:shadow-none',
+    cardHover: '',
+    buttonHover: '',
+    spacingHero: 'py-40',
+    spacingSection: 'py-24',
+    spacingFooter: 'py-12',
+    headingFont: 'font-editorial',
+    headingWeight: 'font-semibold',
+    headingTracking: 'tracking-normal',
+    bodyLeading: 'leading-loose',
+    heroShape: 'none',
+  },
+  bold: {
+    radiusCard: 'rounded-none',
+    radiusButton: 'rounded-none',
+    radiusInput: 'rounded-none',
+    shadowCard: 'shadow-[6px_6px_0_0_rgba(0,0,0,0.9)]',
+    shadowCardHover: 'hover:shadow-[8px_8px_0_0_rgba(0,0,0,0.9)]',
+    shadowButton: 'shadow-[6px_6px_0_0_rgba(0,0,0,0.9)]',
+    shadowButtonHover: 'hover:shadow-[8px_8px_0_0_rgba(0,0,0,0.9)]',
+    cardHover: 'hover:-translate-y-0.5',
+    buttonHover: 'hover:-translate-y-0.5',
+    spacingHero: 'py-28',
+    spacingSection: 'py-16',
+    spacingFooter: 'py-10',
+    headingFont: 'font-sans',
+    headingWeight: 'font-black',
+    headingTracking: 'uppercase tracking-tight',
+    bodyLeading: 'leading-relaxed',
+    heroShape: 'diagonal',
+  },
+};
+
+export const STYLE_PRESET_META: Record<LandingStylePreset, { name: string; description: string }> = {
+  modern: { name: 'Moderno', description: 'Bordes redondeados, sombras suaves, botones tipo píldora.' },
+  classic: { name: 'Clásico', description: 'Bordes rectos, planos y formales, espaciado generoso.' },
+  soft: { name: 'Suave', description: 'Muy redondeado, sombras difusas, sensación acogedora.' },
+  editorial: { name: 'Editorial', description: 'Tipografía serif, minimalista y sin decoración, estilo revista.' },
+  bold: { name: 'Audaz', description: 'Títulos extra gruesos en mayúsculas, sombras marcadas, look llamativo.' },
+};
+
 export const DEFAULT_FORM_STATE: LandingFormState = {
   template_type: 'basic',
+  style_preset: 'modern',
   sections: [
     { type: 'hero', content: DEFAULT_SECTION_CONTENT.hero },
     { type: 'about', content: DEFAULT_SECTION_CONTENT.about },

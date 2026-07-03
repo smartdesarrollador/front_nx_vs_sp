@@ -9,6 +9,7 @@ import { PublicLandingView } from '@/components/landing/PublicLandingView';
 import { PublicLandingFooter } from '@/components/landing/PublicLandingFooter';
 import type { LandingSocialLinks } from '@/types/digital';
 import type { HeroContent } from '@/features/landing/types';
+import { STYLE_PRESET_TOKENS } from '@/features/landing/types';
 
 interface Props {
   params: Promise<{ locale: string; username: string }>;
@@ -46,6 +47,7 @@ export default async function LandingPage({ params }: Props) {
   const ctaUrl = heroContent?.ctaUrl;
 
   const socialLinks = (landing.social_links ?? {}) as LandingSocialLinks;
+  const styleTokens = STYLE_PRESET_TOKENS[landing.style_preset ?? 'modern'];
 
   return (
     <div className="min-h-screen flex flex-col bg-white dark:bg-gray-900 scroll-smooth">
@@ -69,6 +71,8 @@ export default async function LandingPage({ params }: Props) {
         ctaText={ctaText}
         ctaUrl={ctaUrl}
         navBgColor={landing.theme_colors?.nav_bg}
+        navTextColor={landing.theme_colors?.nav_text}
+        styleTokens={styleTokens}
       />
       <main className="flex-1 pt-16">
         <PublicLandingView profile={profile} landing={landing} />
@@ -79,6 +83,7 @@ export default async function LandingPage({ params }: Props) {
         socialLinks={socialLinks}
         locale={locale}
         poweredByText={t('poweredBy')}
+        styleTokens={styleTokens}
       />
     </div>
   );

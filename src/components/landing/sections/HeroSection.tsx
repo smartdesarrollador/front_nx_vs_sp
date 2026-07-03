@@ -34,6 +34,28 @@ function getHeroBg(templateType: string): string {
   }
 }
 
+function renderHeroShape(shape: string) {
+  switch (shape) {
+    case 'blobs':
+      return (
+        <>
+          <div className="absolute -top-32 -right-32 w-96 h-96 rounded-full bg-white/5 pointer-events-none" />
+          <div className="absolute -bottom-24 -left-24 w-80 h-80 rounded-full bg-white/5 pointer-events-none" />
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] rounded-full bg-white/3 pointer-events-none" />
+        </>
+      );
+    case 'diagonal':
+      return (
+        <div className="absolute inset-0 pointer-events-none overflow-hidden">
+          <div className="absolute -top-1/4 -right-1/3 w-[140%] h-[60%] -rotate-6 bg-white/5" />
+        </div>
+      );
+    case 'none':
+    default:
+      return null;
+  }
+}
+
 export interface HeroSectionProps extends SectionProps {
   profile?: PublicProfile;
   socialLinks?: LandingSocialLinks;
@@ -41,7 +63,7 @@ export interface HeroSectionProps extends SectionProps {
   themeColors?: LandingThemeColors;
 }
 
-export function HeroSection({ content, templateType, profile, socialLinks, themeColors }: HeroSectionProps) {
+export function HeroSection({ content, templateType, profile, socialLinks, themeColors, styleTokens }: HeroSectionProps) {
   const {
     title,
     subtitle,
@@ -73,13 +95,11 @@ export function HeroSection({ content, templateType, profile, socialLinks, theme
   return (
     <section
       id="hero"
-      className={`relative overflow-hidden py-32 px-4 ${heroBgStyle ? '' : bgClass}`}
+      className={`relative overflow-hidden ${styleTokens.spacingHero} px-4 ${heroBgStyle ? '' : bgClass}`}
       style={heroBgStyle}
     >
-      {/* Blobs decorativos */}
-      <div className="absolute -top-32 -right-32 w-96 h-96 rounded-full bg-white/5 pointer-events-none" />
-      <div className="absolute -bottom-24 -left-24 w-80 h-80 rounded-full bg-white/5 pointer-events-none" />
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] rounded-full bg-white/3 pointer-events-none" />
+      {/* Forma decorativa del hero, según preset */}
+      {renderHeroShape(styleTokens.heroShape)}
 
       <div className={`relative max-w-4xl mx-auto flex flex-col gap-6 ${itemsClass} ${alignClass}`}>
         {/* Avatar */}
@@ -108,7 +128,7 @@ export function HeroSection({ content, templateType, profile, socialLinks, theme
 
         {/* Título */}
         {title && (
-          <h1 className="text-4xl md:text-6xl font-bold leading-tight" style={heroTextStyle}>
+          <h1 className={`text-4xl md:text-6xl leading-tight ${styleTokens.headingFont} ${styleTokens.headingWeight} ${styleTokens.headingTracking}`} style={heroTextStyle}>
             {title}
           </h1>
         )}
@@ -116,7 +136,7 @@ export function HeroSection({ content, templateType, profile, socialLinks, theme
         {/* Subtítulo */}
         {subtitle && (
           <p
-            className={`text-lg md:text-xl max-w-2xl leading-relaxed ${heroTextStyle ? '' : isLight ? 'text-gray-600' : 'opacity-85'}`}
+            className={`text-lg md:text-xl max-w-2xl ${styleTokens.bodyLeading} ${heroTextStyle ? '' : isLight ? 'text-gray-600' : 'opacity-85'}`}
             style={heroTextStyle}
           >
             {subtitle}
@@ -127,7 +147,7 @@ export function HeroSection({ content, templateType, profile, socialLinks, theme
         {ctaText && (
           <a
             href={ctaUrl || '#contact'}
-            className={`inline-flex items-center px-8 py-4 rounded-full font-semibold text-lg transition-all duration-200 shadow-lg hover:shadow-xl hover:-translate-y-0.5 ${ctaBgStyle ? '' : isLight ? 'bg-primary-600 text-white hover:bg-primary-700' : 'bg-white text-primary-700 hover:bg-gray-50'}`}
+            className={`inline-flex items-center px-8 py-4 ${styleTokens.radiusButton} font-semibold text-lg transition-all duration-200 ${styleTokens.shadowButton} ${styleTokens.shadowButtonHover} ${styleTokens.buttonHover} ${ctaBgStyle ? '' : isLight ? 'bg-primary-600 text-white hover:bg-primary-700' : 'bg-white text-primary-700 hover:bg-gray-50'}`}
             style={ctaBgStyle}
           >
             {ctaText}

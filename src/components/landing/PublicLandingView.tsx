@@ -1,5 +1,7 @@
 import type { PublicProfile, LandingTemplate, LandingSectionType, LandingSocialLinks } from '@/types/digital';
 import type { ComponentType } from 'react';
+import type { StyleTokens } from '@/features/landing/types';
+import { STYLE_PRESET_TOKENS } from '@/features/landing/types';
 import { HeroSection } from './sections/HeroSection';
 import type { HeroSectionProps } from './sections/HeroSection';
 import { AboutSection } from './sections/AboutSection';
@@ -16,6 +18,7 @@ export interface SectionProps {
   profile?: PublicProfile;
   socialLinks?: LandingSocialLinks;
   accentColor?: string;
+  styleTokens: StyleTokens;
 }
 
 export interface ContactSectionProps extends SectionProps {
@@ -41,6 +44,7 @@ export function PublicLandingView({ profile, landing }: Props) {
   const socialLinks = (landing.social_links ?? {}) as LandingSocialLinks;
   const accentColor = landing.accent_color || undefined;
   const themeColors = landing.theme_colors;
+  const styleTokens = STYLE_PRESET_TOKENS[landing.style_preset ?? 'modern'];
 
   return (
     <div>
@@ -55,6 +59,7 @@ export function PublicLandingView({ profile, landing }: Props) {
               socialLinks={socialLinks}
               accentColor={accentColor}
               themeColors={themeColors}
+              styleTokens={styleTokens}
             />
           );
         }
@@ -68,6 +73,7 @@ export function PublicLandingView({ profile, landing }: Props) {
               enableContactForm={landing.enable_contact_form}
               contactEmail={landing.contact_email}
               socialLinks={socialLinks}
+              styleTokens={styleTokens}
             />
           );
         }
@@ -80,6 +86,7 @@ export function PublicLandingView({ profile, landing }: Props) {
             content={section.content}
             templateType={landing.template_type}
             accentColor={accentColor}
+            styleTokens={styleTokens}
           />
         );
       })}

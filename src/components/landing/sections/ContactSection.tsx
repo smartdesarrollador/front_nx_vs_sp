@@ -26,6 +26,7 @@ export function ContactSection({
   enableContactForm,
   contactEmail,
   socialLinks,
+  styleTokens,
 }: ContactSectionProps) {
   const { title, email, phone, address, showForm } = content as ContactContent;
 
@@ -38,7 +39,7 @@ export function ContactSection({
       {email && (
         <a
           href={`mailto:${email}`}
-          className="flex items-center gap-3 p-4 bg-white dark:bg-gray-800 rounded-xl shadow-sm hover:shadow-md transition-shadow group"
+          className={`flex items-center gap-3 p-4 bg-white dark:bg-gray-800 ${styleTokens.radiusCard} ${styleTokens.shadowCard} ${styleTokens.shadowCardHover} transition-shadow group`}
         >
           <Mail className="w-5 h-5 text-primary-600 flex-shrink-0" />
           <span className="text-gray-700 dark:text-gray-200 group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors">
@@ -49,7 +50,7 @@ export function ContactSection({
       {phone && (
         <a
           href={`tel:${phone}`}
-          className="flex items-center gap-3 p-4 bg-white dark:bg-gray-800 rounded-xl shadow-sm hover:shadow-md transition-shadow group"
+          className={`flex items-center gap-3 p-4 bg-white dark:bg-gray-800 ${styleTokens.radiusCard} ${styleTokens.shadowCard} ${styleTokens.shadowCardHover} transition-shadow group`}
         >
           <Phone className="w-5 h-5 text-primary-600 flex-shrink-0" />
           <span className="text-gray-700 dark:text-gray-200 group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors">
@@ -58,7 +59,7 @@ export function ContactSection({
         </a>
       )}
       {address && (
-        <div className="flex items-start gap-3 p-4 bg-white dark:bg-gray-800 rounded-xl shadow-sm">
+        <div className={`flex items-start gap-3 p-4 bg-white dark:bg-gray-800 ${styleTokens.radiusCard} ${styleTokens.shadowCard}`}>
           <MapPin className="w-5 h-5 text-primary-600 mt-0.5 flex-shrink-0" />
           <span className="text-gray-700 dark:text-gray-200">{address}</span>
         </div>
@@ -91,9 +92,9 @@ export function ContactSection({
   );
 
   return (
-    <section id="contact" className="max-w-5xl mx-auto px-4 py-16">
+    <section id="contact" className={`max-w-5xl mx-auto px-4 ${styleTokens.spacingSection}`}>
       {title && (
-        <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-10 text-center">
+        <h2 className={`text-3xl ${styleTokens.headingFont} ${styleTokens.headingWeight} ${styleTokens.headingTracking} text-gray-900 dark:text-white mb-10 text-center`}>
           {title}
         </h2>
       )}
@@ -102,7 +103,7 @@ export function ContactSection({
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
           <div>{contactInfo}</div>
           <div>
-            <ContactFormClient contactEmail={contactEmail || email || ''} />
+            <ContactFormClient contactEmail={contactEmail || email || ''} styleTokens={styleTokens} />
           </div>
         </div>
       ) : (

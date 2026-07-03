@@ -23,13 +23,13 @@ const ICON_MAP: Record<string, LucideIcon> = {
   camera: Camera, book: BookOpen, briefcase: Briefcase,
 };
 
-export function ServicesSection({ content, accentColor }: SectionProps) {
+export function ServicesSection({ content, accentColor, styleTokens }: SectionProps) {
   const { title, items = [] } = content as ServicesContent;
 
   return (
-    <section id="services" className="max-w-5xl mx-auto px-4 py-16">
+    <section id="services" className={`max-w-5xl mx-auto px-4 ${styleTokens.spacingSection}`}>
       {title && (
-        <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-10 text-center">
+        <h2 className={`text-3xl ${styleTokens.headingFont} ${styleTokens.headingWeight} ${styleTokens.headingTracking} text-gray-900 dark:text-white mb-10 text-center`}>
           {title}
         </h2>
       )}
@@ -42,11 +42,11 @@ export function ServicesSection({ content, accentColor }: SectionProps) {
             return (
               <div
                 key={i}
-                className="group bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700 p-6 border-t-4 hover:shadow-lg hover:-translate-y-1 transition-all duration-300"
+                className={`group bg-white dark:bg-gray-800 ${styleTokens.radiusCard} ${styleTokens.shadowCard} border border-gray-100 dark:border-gray-700 p-6 border-t-4 ${styleTokens.shadowCardHover} ${styleTokens.cardHover} transition-all duration-300`}
                 style={{ borderTopColor: accentColor || undefined }}
               >
                 <div
-                  className="w-12 h-12 rounded-xl bg-primary-100 dark:bg-primary-900/40 flex items-center justify-center mb-4"
+                  className={`w-12 h-12 ${styleTokens.radiusCard} bg-primary-100 dark:bg-primary-900/40 flex items-center justify-center mb-4`}
                 >
                   <IconComp className="w-6 h-6 text-primary-600 dark:text-primary-400" />
                 </div>

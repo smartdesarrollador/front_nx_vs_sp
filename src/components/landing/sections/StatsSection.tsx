@@ -98,18 +98,18 @@ function getGridCols(count: number): string {
   return 'grid-cols-2 sm:grid-cols-4';
 }
 
-export function StatsSection({ content, templateType, accentColor }: SectionProps) {
+export function StatsSection({ content, templateType, accentColor, styleTokens }: SectionProps) {
   const { title, items = [] } = content as StatsContent;
   const bgClass = getStatsBg(templateType);
 
   return (
     <section
-      className={`py-16 px-4 ${bgClass}`}
+      className={`${styleTokens.spacingSection} px-4 ${bgClass}`}
       style={accentColor && !['creative', 'corporate'].includes(templateType) ? { background: accentColor } : undefined}
     >
       <div className="max-w-5xl mx-auto">
         {title && (
-          <h2 className="text-3xl font-bold mb-10 text-center">{title}</h2>
+          <h2 className={`text-3xl ${styleTokens.headingFont} ${styleTokens.headingWeight} ${styleTokens.headingTracking} mb-10 text-center`}>{title}</h2>
         )}
         <div className={`grid ${getGridCols(items.length)} gap-8 divide-x divide-white/20`}>
           {items.map((item, i) => {

@@ -11,7 +11,7 @@ interface AboutContent {
   skills?: string[];
 }
 
-export function AboutSection({ content }: SectionProps) {
+export function AboutSection({ content, styleTokens }: SectionProps) {
   const {
     title,
     text,
@@ -22,9 +22,9 @@ export function AboutSection({ content }: SectionProps) {
   } = content as AboutContent;
 
   return (
-    <section id="about" className="max-w-5xl mx-auto px-4 py-16">
+    <section id="about" className={`max-w-5xl mx-auto px-4 ${styleTokens.spacingSection}`}>
       {title && (
-        <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-10 text-center">
+        <h2 className={`text-3xl ${styleTokens.headingFont} ${styleTokens.headingWeight} ${styleTokens.headingTracking} text-gray-900 dark:text-white mb-10 text-center`}>
           {title}
         </h2>
       )}
@@ -34,11 +34,11 @@ export function AboutSection({ content }: SectionProps) {
         {/* Imagen */}
         <div className="flex-shrink-0 w-full md:w-auto">
           {imageUrl ? (
-            <div className="relative w-full max-w-sm mx-auto aspect-square rounded-2xl overflow-hidden shadow-xl">
+            <div className={`relative w-full max-w-sm mx-auto aspect-square ${styleTokens.radiusCard} overflow-hidden ${styleTokens.shadowCard}`}>
               <Image src={imageUrl} alt="About" fill className="object-cover" />
             </div>
           ) : (
-            <div className="w-full max-w-sm mx-auto aspect-square rounded-2xl bg-gray-100 dark:bg-gray-800 flex items-center justify-center">
+            <div className={`w-full max-w-sm mx-auto aspect-square ${styleTokens.radiusCard} bg-gray-100 dark:bg-gray-800 flex items-center justify-center`}>
               <User className="w-20 h-20 text-gray-300 dark:text-gray-600" />
             </div>
           )}

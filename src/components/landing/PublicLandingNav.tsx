@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { Menu, X } from 'lucide-react';
 import { ThemeToggle } from '@/components/shared/ThemeToggle';
 import type { LandingSection, LandingSectionType } from '@/types/digital';
+import type { StyleTokens } from '@/features/landing/types';
 
 const ANCHOR_LABELS: Record<LandingSectionType, string> = {
   hero: 'Inicio',
@@ -24,9 +25,11 @@ interface Props {
   ctaText?: string;
   ctaUrl?: string;
   navBgColor?: string;
+  navTextColor?: string;
+  styleTokens: StyleTokens;
 }
 
-export function PublicLandingNav({ sections, profileName, locale, ctaText, ctaUrl, navBgColor }: Props) {
+export function PublicLandingNav({ sections, profileName, locale, ctaText, ctaUrl, navBgColor, navTextColor, styleTokens }: Props) {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [activeSection, setActiveSection] = useState<string>('');
 
@@ -61,7 +64,7 @@ export function PublicLandingNav({ sections, profileName, locale, ctaText, ctaUr
       <div className="max-w-6xl mx-auto px-4 h-16 flex items-center justify-between">
         <Link
           href={`/${locale}`}
-          className="text-lg font-bold text-primary-600 hover:text-primary-700 transition-colors"
+          className={`text-lg ${styleTokens.headingFont} ${styleTokens.headingWeight} text-primary-600 hover:text-primary-700 transition-colors`}
         >
           {profileName}
         </Link>
@@ -73,11 +76,14 @@ export function PublicLandingNav({ sections, profileName, locale, ctaText, ctaUr
               <a
                 key={section.type}
                 href={`#${section.type}`}
-                className={`text-sm transition-colors ${
-                  isActive
-                    ? 'text-primary-600 dark:text-primary-400 font-semibold'
-                    : 'text-gray-600 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-400'
+                className={`text-sm transition-colors ${isActive ? 'font-semibold' : ''} ${
+                  navTextColor
+                    ? ''
+                    : isActive
+                      ? 'text-primary-600 dark:text-primary-400'
+                      : 'text-gray-600 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-400'
                 }`}
+                style={navTextColor ? { color: navTextColor, opacity: isActive ? 1 : 0.75 } : undefined}
               >
                 {ANCHOR_LABELS[section.type]}
               </a>
@@ -87,7 +93,7 @@ export function PublicLandingNav({ sections, profileName, locale, ctaText, ctaUr
           {ctaText && (
             <a
               href={ctaUrl || '#contact'}
-              className="ml-2 inline-flex items-center px-4 py-2 rounded-full bg-primary-600 text-white text-sm font-medium hover:bg-primary-700 transition-colors shadow-sm"
+              className={`ml-2 inline-flex items-center px-4 py-2 ${styleTokens.radiusButton} bg-primary-600 text-white text-sm font-medium hover:bg-primary-700 transition-colors ${styleTokens.shadowButton}`}
             >
               {ctaText}
             </a>
@@ -129,7 +135,7 @@ export function PublicLandingNav({ sections, profileName, locale, ctaText, ctaUr
             <a
               href={ctaUrl || '#contact'}
               onClick={() => setMobileOpen(false)}
-              className="mt-2 text-center px-4 py-2.5 rounded-full bg-primary-600 text-white text-sm font-medium hover:bg-primary-700 transition-colors"
+              className={`mt-2 text-center px-4 py-2.5 ${styleTokens.radiusButton} bg-primary-600 text-white text-sm font-medium hover:bg-primary-700 transition-colors`}
             >
               {ctaText}
             </a>

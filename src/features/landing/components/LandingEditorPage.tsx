@@ -160,6 +160,8 @@ export function LandingEditorPage({ locale }: Props) {
             accentColor={formState.accent_color}
             onThemeColorsChange={(colors) => setFormState((s) => ({ ...s, theme_colors: colors }))}
             onAccentColorChange={(color) => setFormState((s) => ({ ...s, accent_color: color }))}
+            stylePreset={formState.style_preset}
+            onStylePresetChange={(preset) => setFormState((s) => ({ ...s, style_preset: preset }))}
           />
         </div>
       )}

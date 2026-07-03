@@ -1,9 +1,16 @@
 'use client';
 import { Lock, RotateCcw } from 'lucide-react';
-import type { LandingTemplateType } from '@/types/digital';
+import type { LandingTemplateType, LandingStylePreset } from '@/types/digital';
 import type { Plan } from '@/data/featureGates';
 import { isPlanHigherThan } from '@/data/featureGates';
-import { TEMPLATE_META, TEMPLATE_PLAN_REQUIRED, TEMPLATE_PALETTES, type LandingThemeColors } from '../types';
+import {
+  TEMPLATE_META,
+  TEMPLATE_PLAN_REQUIRED,
+  TEMPLATE_PALETTES,
+  STYLE_PRESET_META,
+  STYLE_PRESET_TOKENS,
+  type LandingThemeColors,
+} from '../types';
 
 interface Props {
   selected: LandingTemplateType;
@@ -13,9 +20,12 @@ interface Props {
   accentColor: string;
   onThemeColorsChange: (colors: LandingThemeColors) => void;
   onAccentColorChange: (color: string) => void;
+  stylePreset: LandingStylePreset;
+  onStylePresetChange: (preset: LandingStylePreset) => void;
 }
 
 const TEMPLATES: LandingTemplateType[] = ['basic', 'corporate', 'creative', 'minimal'];
+const STYLE_PRESETS: LandingStylePreset[] = ['modern', 'classic', 'soft', 'editorial', 'bold'];
 
 const inputClass =
   'w-28 rounded-lg border border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-700 px-3 py-2 text-sm font-mono uppercase text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500';
@@ -70,6 +80,8 @@ export function TemplateSelector({
   accentColor,
   onThemeColorsChange,
   onAccentColorChange,
+  stylePreset,
+  onStylePresetChange,
 }: Props) {
   const handleTemplateClick = (tpl: LandingTemplateType) => {
     const palette = TEMPLATE_PALETTES[tpl];
@@ -106,6 +118,7 @@ export function TemplateSelector({
     themeColors.hero_text ||
     themeColors.button_bg ||
     themeColors.nav_bg ||
+    themeColors.nav_text ||
     accentColor
   );
 
@@ -249,6 +262,54 @@ export function TemplateSelector({
             onChange={(v) => setColor('nav_bg', v)}
             onReset={() => clearColor('nav_bg')}
           />
+          <ColorRow
+            label="Nav — Texto"
+            hint="Color de los enlaces del menú"
+            value={themeColors.nav_text ?? ''}
+            onChange={(v) => setColor('nav_text', v)}
+            onReset={() => clearColor('nav_text')}
+          />
+        </div>
+      </div>
+
+      {/* Separador */}
+      <hr className="border-gray-200 dark:border-gray-700" />
+
+      {/* Sección 3: Elige un estilo */}
+      <div>
+        <h3 className="text-sm font-semibold text-gray-900 dark:text-white">Elige un estilo</h3>
+        <p className="text-xs text-gray-500 dark:text-gray-400 mt-0.5 mb-4">
+          Define bordes, sombras, tipografía y espaciado de toda la landing
+        </p>
+        <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+          {STYLE_PRESETS.map((preset) => {
+            const meta = STYLE_PRESET_META[preset];
+            const tokens = STYLE_PRESET_TOKENS[preset];
+            const isSelected = stylePreset === preset;
+
+            return (
+              <button
+                key={preset}
+                type="button"
+                onClick={() => onStylePresetChange(preset)}
+                className={`relative rounded-xl border-2 p-3 text-left transition-all focus:outline-none ${
+                  isSelected
+                    ? 'border-blue-600 shadow-md'
+                    : 'border-gray-200 dark:border-gray-700 hover:border-blue-400'
+                }`}
+              >
+                <div className="h-16 rounded-lg mb-3 bg-gray-50 dark:bg-gray-900/40 flex items-center justify-center gap-2 p-3">
+                  <div
+                    className={`w-10 h-8 bg-white dark:bg-gray-700 border border-gray-200 dark:border-gray-600 ${tokens.radiusCard} ${tokens.shadowCard}`}
+                  />
+                  <div className={`w-10 h-5 bg-primary-600 ${tokens.radiusButton} ${tokens.shadowButton}`} />
+                </div>
+
+                <p className={`text-sm text-gray-900 dark:text-white ${tokens.headingFont} ${tokens.headingWeight} ${tokens.headingTracking}`}>{meta.name}</p>
+                <p className="text-xs text-gray-500 dark:text-gray-400 mt-0.5">{meta.description}</p>
+              </button>
+            );
+          })}
         </div>
       </div>
     </div>

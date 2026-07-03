@@ -15,14 +15,14 @@ interface TestimonialsContent {
   items?: TestimonialItem[];
 }
 
-export function TestimonialsSection({ content }: SectionProps) {
+export function TestimonialsSection({ content, styleTokens }: SectionProps) {
   const { title, items = [] } = content as TestimonialsContent;
 
   return (
-    <section id="testimonials" className="bg-gray-50 dark:bg-gray-800/50 py-16">
+    <section id="testimonials" className={`bg-gray-50 dark:bg-gray-800/50 ${styleTokens.spacingSection}`}>
       <div className="max-w-5xl mx-auto px-4">
         {title && (
-          <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-10 text-center">
+          <h2 className={`text-3xl ${styleTokens.headingFont} ${styleTokens.headingWeight} ${styleTokens.headingTracking} text-gray-900 dark:text-white mb-10 text-center`}>
             {title}
           </h2>
         )}
@@ -33,7 +33,7 @@ export function TestimonialsSection({ content }: SectionProps) {
             {items.map((item, i) => (
               <div
                 key={i}
-                className="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-sm border border-gray-100 dark:border-gray-700 flex flex-col"
+                className={`bg-white dark:bg-gray-800 ${styleTokens.radiusCard} p-6 ${styleTokens.shadowCard} border border-gray-100 dark:border-gray-700 flex flex-col`}
               >
                 {/* Comilla decorativa */}
                 <span className="font-serif text-5xl text-primary-200 dark:text-primary-800 leading-none mb-3 select-none">

@@ -14,15 +14,15 @@ interface FAQContent {
   items?: FAQItem[];
 }
 
-export function FAQSection({ content }: SectionProps) {
+export function FAQSection({ content, styleTokens }: SectionProps) {
   const { title, items = [] } = content as FAQContent;
   const [openIndex, setOpenIndex] = useState<number | null>(null);
 
   return (
-    <section id="faq" className="bg-gray-50 dark:bg-gray-800/50 py-16">
+    <section id="faq" className={`bg-gray-50 dark:bg-gray-800/50 ${styleTokens.spacingSection}`}>
       <div className="max-w-3xl mx-auto px-4">
         {title && (
-          <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-10 text-center">
+          <h2 className={`text-3xl ${styleTokens.headingFont} ${styleTokens.headingWeight} ${styleTokens.headingTracking} text-gray-900 dark:text-white mb-10 text-center`}>
             {title}
           </h2>
         )}
@@ -35,7 +35,7 @@ export function FAQSection({ content }: SectionProps) {
               return (
                 <div
                   key={i}
-                  className="bg-white dark:bg-gray-800 rounded-xl border border-gray-100 dark:border-gray-700 overflow-hidden"
+                  className={`bg-white dark:bg-gray-800 ${styleTokens.radiusCard} border border-gray-100 dark:border-gray-700 overflow-hidden`}
                 >
                   <button
                     onClick={() => setOpenIndex(isOpen ? null : i)}

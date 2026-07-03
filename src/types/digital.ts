@@ -45,6 +45,8 @@ export type LandingSectionType =
 
 export type LandingTemplateType = 'basic' | 'minimal' | 'corporate' | 'creative';
 
+export type LandingStylePreset = 'modern' | 'classic' | 'soft' | 'editorial' | 'bold';
+
 export interface LandingSection {
   type: LandingSectionType;
   content: Record<string, unknown>;
@@ -64,10 +66,12 @@ export interface LandingThemeColors {
   hero_text?: string;
   button_bg?: string;
   nav_bg?: string;
+  nav_text?: string;
 }
 
 export interface LandingTemplate {
   template_type: LandingTemplateType;
+  style_preset?: LandingStylePreset;
   sections: LandingSection[];
   contact_email: string;
   enable_contact_form: boolean;

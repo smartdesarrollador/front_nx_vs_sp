@@ -24,6 +24,7 @@ export function LandingPreview({ profile, formState, isLoading }: Props) {
 
   const landingForPreview: LandingTemplate = {
     template_type: formState.template_type,
+    style_preset: formState.style_preset,
     sections: formState.sections,
     contact_email: formState.contact_email,
     enable_contact_form: formState.enable_contact_form,
