@@ -1,5 +1,4 @@
 import { notFound } from 'next/navigation';
-import { getTranslations } from 'next-intl/server';
 import type { Metadata } from 'next';
 import { getPublicPortfolio } from '@/lib/publicApi';
 import { buildCreativeWorkJsonLd } from '@/lib/seo';
@@ -29,7 +28,6 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
 export default async function PortfolioItemPage({ params }: Props) {
   const { locale, username, slug } = await params;
-  const t = await getTranslations('portfolio');
   const data = await getPublicPortfolio(username);
 
   if (!data) notFound();
@@ -54,7 +52,14 @@ export default async function PortfolioItemPage({ params }: Props) {
         <PortfolioDetail item={item} locale={locale} username={username} allItems={data.items} />
       </main>
       <footer className="text-center py-6 text-sm text-gray-400 border-t border-gray-100 dark:border-gray-800">
-        {t('poweredBy')}
+        <a
+          href="https://digisider.com"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="hover:text-primary-600 dark:hover:text-primary-400 transition-colors"
+        >
+          Digisider
+        </a>
       </footer>
     </div>
   );

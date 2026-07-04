@@ -1,5 +1,4 @@
 import { notFound } from 'next/navigation';
-import { getTranslations } from 'next-intl/server';
 import type { Metadata } from 'next';
 import { getPublicPortfolio } from '@/lib/publicApi';
 import { buildItemListJsonLd } from '@/lib/seo';
@@ -36,7 +35,6 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
 export default async function PortfolioPage({ params }: Props) {
   const { locale, username } = await params;
-  const t = await getTranslations('portfolio');
   const data = await getPublicPortfolio(username);
 
   if (!data) notFound();
@@ -123,7 +121,7 @@ export default async function PortfolioPage({ params }: Props) {
           styleTokens={styleTokens}
         />
       </main>
-      <PortfolioFooter poweredByText={t('poweredBy')} digitalCard={digital_card} styleTokens={styleTokens} />
+      <PortfolioFooter digitalCard={digital_card} styleTokens={styleTokens} />
     </div>
   );
 }

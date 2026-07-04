@@ -89,7 +89,14 @@ export default async function CVPage({ params }: Props) {
         </main>
 
         <footer className="text-center py-6 text-sm text-gray-400 border-t border-gray-100 dark:border-gray-800 print:hidden">
-          {t('poweredBy')}
+          <a
+            href="https://digisider.com"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="hover:text-primary-600 dark:hover:text-primary-400 transition-colors"
+          >
+            Digisider
+          </a>
         </footer>
       </div>
     </>

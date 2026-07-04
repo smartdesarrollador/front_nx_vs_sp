@@ -1,5 +1,4 @@
 import { notFound } from 'next/navigation';
-import { getTranslations } from 'next-intl/server';
 import type { Metadata } from 'next';
 import Script from 'next/script';
 import { getPublicLanding } from '@/lib/publicApi';
@@ -33,7 +32,6 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
 export default async function LandingPage({ params }: Props) {
   const { locale, username } = await params;
-  const t = await getTranslations('landing');
   const data = await getPublicLanding(username);
 
   if (!data || !data.landing) notFound();
@@ -82,7 +80,6 @@ export default async function LandingPage({ params }: Props) {
         username={username}
         socialLinks={socialLinks}
         locale={locale}
-        poweredByText={t('poweredBy')}
         styleTokens={styleTokens}
       />
     </div>

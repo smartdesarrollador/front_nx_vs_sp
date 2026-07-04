@@ -3,12 +3,11 @@ import type { PortfolioStyleTokens } from '@/features/portfolio/types';
 import { getActiveSocials } from './socialIcons';
 
 interface Props {
-  poweredByText: string;
   digitalCard?: DigitalCard | null;
   styleTokens?: PortfolioStyleTokens;
 }
 
-export function PortfolioFooter({ poweredByText, digitalCard, styleTokens }: Props) {
+export function PortfolioFooter({ digitalCard, styleTokens }: Props) {
   const activeSocials = getActiveSocials(digitalCard);
 
   return (
@@ -28,7 +27,14 @@ export function PortfolioFooter({ poweredByText, digitalCard, styleTokens }: Pro
           ))}
         </div>
       )}
-      {poweredByText}
+      <a
+        href="https://digisider.com"
+        target="_blank"
+        rel="noopener noreferrer"
+        className="hover:text-primary-600 dark:hover:text-primary-400 transition-colors"
+      >
+        Digisider
+      </a>
     </footer>
   );
 }

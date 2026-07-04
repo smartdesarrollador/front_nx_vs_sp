@@ -7,7 +7,6 @@ interface Props {
   username: string;
   socialLinks: LandingSocialLinks;
   locale: string;
-  poweredByText?: string;
   styleTokens: StyleTokens;
 }
 
@@ -20,7 +19,7 @@ const SOCIAL_ICONS = [
   { key: 'tiktok' as const, Icon: Music2, label: 'TikTok' },
 ];
 
-export function PublicLandingFooter({ displayName, socialLinks, poweredByText, styleTokens }: Props) {
+export function PublicLandingFooter({ displayName, socialLinks, styleTokens }: Props) {
   const year = new Date().getFullYear();
   const activeSocials = SOCIAL_ICONS.filter(({ key }) => socialLinks?.[key]);
 
@@ -31,14 +30,15 @@ export function PublicLandingFooter({ displayName, socialLinks, poweredByText, s
           <div className="text-center sm:text-left">
             <p className="font-semibold text-gray-900 dark:text-white">{displayName}</p>
             <p className="text-sm text-gray-400 dark:text-gray-500 mt-0.5">
-              {poweredByText ?? (
-                <>
-                  Creado con{' '}
-                  <span className="text-primary-600 dark:text-primary-400 font-medium">
-                    Vista Digital
-                  </span>
-                </>
-              )}
+              Creado con{' '}
+              <a
+                href="https://digisider.com"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-primary-600 dark:text-primary-400 font-medium hover:underline"
+              >
+                Digisider
+              </a>
             </p>
           </div>
 

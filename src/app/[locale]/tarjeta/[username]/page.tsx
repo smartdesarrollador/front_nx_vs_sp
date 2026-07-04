@@ -1,5 +1,4 @@
 import { notFound } from 'next/navigation';
-import { getTranslations } from 'next-intl/server';
 import type { Metadata } from 'next';
 import { getPublicProfile } from '@/lib/publicApi';
 import { buildPersonJsonLd } from '@/lib/seo';
@@ -36,7 +35,6 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
 export default async function TarjetaPage({ params }: Props) {
   const { locale, username } = await params;
-  const t = await getTranslations('tarjeta');
   const data = await getPublicProfile(username);
 
   if (!data) {
@@ -55,11 +53,11 @@ export default async function TarjetaPage({ params }: Props) {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
       <div className="min-h-screen flex flex-col bg-gray-50 dark:bg-gray-950">
-        <header className="flex items-center justify-end px-6 py-4">
+        <header className="flex items-center justify-end px-6 py-2 lg:py-4">
           <ThemeToggle />
         </header>
 
-        <main className="flex-1 px-4 py-6 lg:px-8 max-w-5xl mx-auto w-full">
+        <main className="flex-1 px-4 pt-2 pb-6 lg:px-8 lg:pt-6 max-w-5xl mx-auto w-full">
           <PublicCardView
             profile={profile}
             card={digital_card}
@@ -68,7 +66,14 @@ export default async function TarjetaPage({ params }: Props) {
         </main>
 
         <footer className="text-center py-6 text-sm text-gray-400">
-          {t('poweredBy')}
+          <a
+            href="https://digisider.com"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="hover:text-primary-600 dark:hover:text-primary-400 transition-colors"
+          >
+            Digisider
+          </a>
         </footer>
       </div>
     </>
