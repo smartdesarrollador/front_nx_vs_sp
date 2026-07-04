@@ -16,6 +16,7 @@ const playfairDisplay = Playfair_Display({
 const locales = ['es', 'en'];
 
 export const metadata: Metadata = {
+  metadataBase: new URL(process.env.NEXT_PUBLIC_APP_URL ?? 'http://localhost:3004'),
   title: {
     default: 'Vista — Digital Services',
     template: '%s | Vista',

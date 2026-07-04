@@ -99,7 +99,7 @@ describe('generateMetadata', () => {
     expect(og.images).toContain('https://example.com/og.jpg');
   });
 
-  it('has empty openGraph images when og_image_url is empty', async () => {
+  it('omits openGraph images key when og_image_url is empty (falls back to opengraph-image.tsx)', async () => {
     mockGetProfile.mockResolvedValueOnce({
       profile: {
         username: 'testuser',
@@ -117,7 +117,32 @@ describe('generateMetadata', () => {
       params: Promise.resolve({ locale: 'es', username: 'testuser' }),
     });
 
-    const og = metadata.openGraph as { images: string[] };
-    expect(og.images).toHaveLength(0);
+    // The `images` key must be entirely absent (not an empty array) so Next.js falls back
+    // to the dynamic opengraph-image.tsx route instead of treating openGraph.images as
+    // explicitly set-and-empty.
+    const og = metadata.openGraph as { images?: string[] };
+    expect(og.images).toBeUndefined();
+  });
+
+  it('sets twitter card to summary_large_image', async () => {
+    mockGetProfile.mockResolvedValueOnce({
+      profile: {
+        username: 'testuser',
+        display_name: 'Test',
+        title: '',
+        bio: '',
+        meta_title: '',
+        meta_description: '',
+        og_image_url: '',
+      },
+      digital_card: null,
+    });
+
+    const metadata = await generateMetadata({
+      params: Promise.resolve({ locale: 'es', username: 'testuser' }),
+    });
+
+    const twitter = metadata.twitter as { card?: string } | null;
+    expect(twitter?.card).toBe('summary_large_image');
   });
 });
