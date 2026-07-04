@@ -1,10 +1,11 @@
 import { notFound } from 'next/navigation';
 import { getTranslations } from 'next-intl/server';
-import type { Metadata } from 'next';
+import type { Metadata, Viewport } from 'next';
 import { getPublicCV } from '@/lib/publicApi';
 import { buildCVPersonJsonLd } from '@/lib/seo';
 import { CVNav } from '@/components/cv/CVNav';
 import { PrintButton } from '@/components/cv/PrintButton';
+import { PwaInstallRegister } from '@/components/shared/PwaInstallRegister';
 import { ClassicTemplate } from '@/components/cv/templates/ClassicTemplate';
 import { ModernTemplate } from '@/components/cv/templates/ModernTemplate';
 import { MinimalTemplate } from '@/components/cv/templates/MinimalTemplate';
@@ -22,7 +23,7 @@ const TEMPLATE_MAP: Record<string, ComponentType<TemplateProps>> = {
 };
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
-  const { username } = await params;
+  const { locale, username } = await params;
   const data = await getPublicCV(username);
   if (!data) return { title: 'CV no encontrado' };
   const { profile } = data;
@@ -34,6 +35,21 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       description: profile.meta_description || profile.bio,
       images: profile.og_image_url ? [profile.og_image_url] : [],
     },
+    manifest: `/${locale}/cv/${username}/manifest`,
+    appleWebApp: {
+      capable: true,
+      statusBarStyle: 'default',
+      title: profile.display_name,
+    },
+  };
+}
+
+export async function generateViewport({ params }: Props): Promise<Viewport> {
+  const { username } = await params;
+  const data = await getPublicCV(username);
+
+  return {
+    themeColor: data?.cv?.accent_color || '#3B82F6',
   };
 }
 
@@ -76,6 +92,7 @@ export default async function CVPage({ params }: Props) {
         }
       `}</style>
 
+      <PwaInstallRegister scope={`/${locale}/cv/${username}`} />
       <div className="min-h-screen flex flex-col bg-gray-50 dark:bg-gray-950">
         <CVNav displayName={profile.display_name} locale={locale} />
 

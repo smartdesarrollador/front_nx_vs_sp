@@ -1,16 +1,17 @@
 import { notFound } from 'next/navigation';
-import type { Metadata } from 'next';
+import type { Metadata, Viewport } from 'next';
 import { getPublicProfile } from '@/lib/publicApi';
 import { buildPersonJsonLd } from '@/lib/seo';
 import { PublicCardView } from '@/components/tarjeta/PublicCardView';
 import { ThemeToggle } from '@/components/shared/ThemeToggle';
+import { PwaInstallRegister } from '@/components/shared/PwaInstallRegister';
 
 interface Props {
   params: Promise<{ locale: string; username: string }>;
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
-  const { username } = await params;
+  const { locale, username } = await params;
   const data = await getPublicProfile(username);
 
   if (!data) {
@@ -30,6 +31,21 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       ...(profile.og_image_url ? { images: [profile.og_image_url] } : {}),
     },
     twitter: { card: 'summary_large_image' },
+    manifest: `/${locale}/tarjeta/${username}/manifest`,
+    appleWebApp: {
+      capable: true,
+      statusBarStyle: 'default',
+      title: profile.display_name,
+    },
+  };
+}
+
+export async function generateViewport({ params }: Props): Promise<Viewport> {
+  const { username } = await params;
+  const data = await getPublicProfile(username);
+
+  return {
+    themeColor: data?.digital_card?.primary_color || '#3B82F6',
   };
 }
 
@@ -52,6 +68,7 @@ export default async function TarjetaPage({ params }: Props) {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
+      <PwaInstallRegister scope={`/${locale}/tarjeta/${username}`} />
       <div className="min-h-screen flex flex-col bg-gray-50 dark:bg-gray-950">
         <header className="flex items-center justify-end px-6 py-2 lg:py-4">
           <ThemeToggle />
