@@ -9,6 +9,7 @@ export interface CardFormData {
   title: string;
   bio: string;
   avatar_url: string;
+  og_image_url: string;
   is_public: boolean;
   email: string;
   phone: string;

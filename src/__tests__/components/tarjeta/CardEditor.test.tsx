@@ -1,10 +1,21 @@
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { CardEditor } from '@/features/tarjeta/components/CardEditor';
 import { useSaveCard } from '@/features/tarjeta/hooks/useSaveCard';
 
 jest.mock('@/features/tarjeta/hooks/useSaveCard', () => ({
   useSaveCard: jest.fn(),
 }));
+
+// CardEditor usa SingleImageField (useUploadImage → useMutation), así que necesita un QueryClient.
+function renderCard() {
+  const qc = new QueryClient({ defaultOptions: { mutations: { retry: false } } });
+  return render(
+    <QueryClientProvider client={qc}>
+      <CardEditor data={null} onSaved={jest.fn()} />
+    </QueryClientProvider>,
+  );
+}
 
 const mockMutate = jest.fn();
 
@@ -19,7 +30,7 @@ beforeEach(() => {
 
 describe('CardEditor', () => {
   it('renders all form sections', () => {
-    render(<CardEditor data={null} onSaved={jest.fn()} />);
+    renderCard();
     expect(screen.getByText('Perfil')).toBeInTheDocument();
     expect(screen.getByText('Contacto')).toBeInTheDocument();
     expect(screen.getByText('Redes Sociales')).toBeInTheDocument();
@@ -27,8 +38,11 @@ describe('CardEditor', () => {
   });
 
   it('calls mutate on valid form submission', async () => {
-    render(<CardEditor data={null} onSaved={jest.fn()} />);
+    renderCard();
 
+    fireEvent.change(screen.getByPlaceholderText('ej: juan-perez'), {
+      target: { value: 'john-doe' },
+    });
     const nameInput = screen.getByPlaceholderText('Tu nombre');
     fireEvent.change(nameInput, { target: { value: 'John Doe' } });
 
@@ -41,8 +55,11 @@ describe('CardEditor', () => {
   });
 
   it('shows URL validation error for invalid URL', async () => {
-    render(<CardEditor data={null} onSaved={jest.fn()} />);
+    renderCard();
 
+    fireEvent.change(screen.getByPlaceholderText('ej: juan-perez'), {
+      target: { value: 'john-doe' },
+    });
     const nameInput = screen.getByPlaceholderText('Tu nombre');
     fireEvent.change(nameInput, { target: { value: 'John Doe' } });
 
@@ -65,7 +82,7 @@ describe('CardEditor', () => {
       error: null,
     });
 
-    render(<CardEditor data={null} onSaved={jest.fn()} />);
+    renderCard();
 
     const submitBtn = screen.getByRole('button', { name: /guardar cambios/i });
     expect(submitBtn).toBeDisabled();
@@ -78,12 +95,12 @@ describe('CardEditor', () => {
       error: null,
     });
 
-    const { container } = render(<CardEditor data={null} onSaved={jest.fn()} />);
+    const { container } = renderCard();
     expect(container.querySelector('.animate-spin')).toBeInTheDocument();
   });
 
   it('shows required error when display_name is empty', async () => {
-    render(<CardEditor data={null} onSaved={jest.fn()} />);
+    renderCard();
 
     const submitBtn = screen.getByRole('button', { name: /guardar cambios/i });
     fireEvent.click(submitBtn);

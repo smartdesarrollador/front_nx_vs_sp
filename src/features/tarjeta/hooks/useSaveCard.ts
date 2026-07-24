@@ -15,6 +15,7 @@ export function useSaveCard() {
         title: payload.title,
         bio: payload.bio,
         avatar_url: payload.avatar_url,
+        og_image_url: payload.og_image_url,
         is_public: payload.is_public,
       };
       const { data: pData } = await apiClient.post<{ profile: PublicProfile }>(

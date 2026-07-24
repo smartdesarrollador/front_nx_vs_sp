@@ -276,12 +276,14 @@ export function ProjectModal({
                   label="Imagen de portada"
                   value={watch('cover_image_url')}
                   onChange={(url) => setValue('cover_image_url', url)}
+                  slot="portfolio_cover"
                 />
 
                 <GalleryImagesField
                   values={galleryImages}
                   onChange={(urls) => setValue('gallery_images', urls)}
                   maxImages={maxGalleryImages}
+                  slot="portfolio_gallery"
                 />
 
                 <div>

@@ -3,6 +3,7 @@ import { useEffect, useState, KeyboardEvent } from 'react';
 import { useForm } from 'react-hook-form';
 import { X, Plus } from 'lucide-react';
 import { useSaveCard } from '../hooks/useSaveCard';
+import { SingleImageField } from '@/features/portfolio/components/ImageUploadField';
 import type { CardData, CardFormData, CustomLink } from '../types';
 import {
   CUSTOM_LINK_ICONS,
@@ -16,6 +17,7 @@ interface FormValues {
   title: string;
   bio: string;
   avatar_url: string;
+  og_image_url: string;
   is_public: boolean;
   email: string;
   phone: string;
@@ -47,6 +49,7 @@ function getDefaultValues(data: CardData | null): FormValues {
     title: data?.profile.title ?? '',
     bio: data?.profile.bio ?? '',
     avatar_url: data?.profile.avatar_url ?? '',
+    og_image_url: data?.profile.og_image_url ?? '',
     is_public: data?.profile.is_public ?? false,
     email: data?.digital_card?.email ?? '',
     phone: data?.digital_card?.phone ?? '',
@@ -165,6 +168,8 @@ export function CardEditor({ data, onSaved }: CardEditorProps) {
     register,
     handleSubmit,
     reset,
+    watch,
+    setValue,
     formState: { errors },
   } = useForm<FormValues>({
     defaultValues: getDefaultValues(data),
@@ -340,13 +345,21 @@ export function CardEditor({ data, onSaved }: CardEditorProps) {
             {errors.bio && <p className={errorClass}>{errors.bio.message}</p>}
           </div>
           <div>
-            <label className={labelClass}>URL de Avatar</label>
-            <input
-              {...register('avatar_url')}
-              className={inputClass}
-              placeholder="https://..."
+            <SingleImageField
+              label="Avatar"
+              value={watch('avatar_url')}
+              onChange={(url) => setValue('avatar_url', url)}
+              slot="avatar"
             />
             {urlErrors.avatar_url && <p className={errorClass}>{urlErrors.avatar_url}</p>}
+          </div>
+          <div>
+            <SingleImageField
+              label="Imagen para compartir (Open Graph)"
+              value={watch('og_image_url')}
+              onChange={(url) => setValue('og_image_url', url)}
+              slot="og_image"
+            />
           </div>
         </div>
       </section>
