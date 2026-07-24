@@ -17,6 +17,10 @@ const config: NextConfig = {
     contentDispositionType: 'attachment',
     contentSecurityPolicy: "default-src 'self'; script-src 'none'; sandbox;",
     remotePatterns: [
+      // Backend propio: imágenes gestionadas (avatar, portada, galería…) servidas desde
+      // /media/ del API. Sin esto, next/image rechaza el host con 400 y la imagen no carga.
+      { protocol: 'https', hostname: '**.digisider.com' }, // prod (api-rbac.digisider.com)
+      { protocol: 'http', hostname: '**.local.test' },     // dev local (rbac.local.test)
       { protocol: 'https', hostname: '**.s3.amazonaws.com' },
       { protocol: 'https', hostname: 'images.unsplash.com' },
       { protocol: 'https', hostname: 'api.dicebear.com' },
